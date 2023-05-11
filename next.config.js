@@ -6,6 +6,7 @@ const nextConfig = {
     loader: "akamai",
     path: "",
   },
+  basePath: "/map-web",
 };
 
 module.exports = nextConfig;
