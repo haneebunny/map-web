@@ -93,34 +93,6 @@ export default function KakaoMap(props) {
         }}
         // style="width:100%;height:100%;position:relative;overflow:hidden;"
       ></div>
-
-      <div class="custom_typecontrol radius_border">
-        <span
-          id="btnRoadmap"
-          class="selected_btn"
-          onclick="setMapType('roadmap')"
-        >
-          지도
-        </span>
-        <span id="btnSkyview" class="btn" onclick="setMapType('skyview')">
-          스카이뷰
-        </span>
-      </div>
-
-      <div class="custom_zoomcontrol radius_border">
-        <span onclick="zoomIn()">
-          <img
-            src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_plus.png"
-            alt="확대"
-          />
-        </span>
-        <span onclick="zoomOut()">
-          <img
-            src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_minus.png"
-            alt="축소"
-          />
-        </span>
-      </div>
     </div>
   );
 }
