@@ -1,4 +1,5 @@
 {
+  "homepage": "https://haneebunny.github.io/map-web",
   "name": "map-web",
   "version": "0.1.0",
   "private": true,
@@ -6,9 +7,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
+    "gh-pages": "5.0.0",
     "next": "13.4.1",
     "react": "18.2.0",
     "react-dom": "18.2.0"
