@@ -6,6 +6,7 @@ const nextConfig = {
     loader: "akamai",
     path: "",
   },
+  assetPrefix: './',
   basePath: "/map-web",
 };
 
