@@ -1,13 +1,10 @@
 import { useEffect } from "react";
-import BaseLayer from "../bottomSheet/BaseLayer";
-import BottomSheet from "../bottomSheet/BottomSheet";
-import Modal from "../modal/Modal";
 
 const POSITIONS = [
   "서울시 서초구 방배로18길 16",
   "서울시 동작구 여의대방로22아길 22",
 ];
-export default function KakaoMap(props) {
+export default function BaseLayer() {
   //지도
 
   useEffect(() => {
@@ -94,23 +91,9 @@ export default function KakaoMap(props) {
       };
     }
   }, []);
-
   return (
-    <div className="w-full">
-      <div
-        id="map"
-        style={{
-          width: "100%",
-          height: "500px",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      ></div>
-      {/* <BaseLayer /> */}
-      <div className=" w-screen h-screen">
-        <BottomSheet />
-      </div>
-      <Modal />
+    <div>
+      <img src="/img/marker.png" />
     </div>
   );
 }
