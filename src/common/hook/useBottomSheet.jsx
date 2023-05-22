@@ -40,8 +40,16 @@ export function useBottomSheet() {
     }
   }, []);
   console.log(maxY);
+  // if (typeof window !== "undefined") console.log(window.innerHeight - 160);
+
 
   useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const windowY = window.innerHeight;
+
     const canUserMoveBottomSheet = () => {
       const { touchMove, isContentAreaTouched } = metrics.current;
 
@@ -128,7 +136,7 @@ export function useBottomSheet() {
           sheet.current.style.setProperty("background-color", "red");
           sheet.current.style.setProperty(
             "transform",
-            `translateY(${minY - maxY}px)`
+            `translateY(${minY - windowY}px)`
             // "translateY(-300px)"
           );
           console.log("style", sheet.current.style);
