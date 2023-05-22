@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[666],{8666:function(n,e,i){i.r(e),i.d(e,{BOTTOM_SHEET_HEIGHT:function(){return u},MAX_Y:function(){return r},MIN_Y:function(){return t}});let t=60,r=window.innerHeight-80,u=window.innerHeight-t;console.log(window.innerHeight,t)}}]);
