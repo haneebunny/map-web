@@ -42,11 +42,10 @@ export function useBottomSheet() {
   console.log(maxY);
   // if (typeof window !== "undefined") console.log(window.innerHeight - 160);
 
-
   useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
+    // if (typeof window === "undefined") {
+    //   return;
+    // }
 
     const windowY = window.innerHeight;
 
@@ -133,7 +132,7 @@ export function useBottomSheet() {
         if (touchMove.movingDirection === "up") {
           console.log("up");
           console.log("minY-maxY", minY, maxY);
-          sheet.current.style.setProperty("background-color", "red");
+          // sheet.current.style.setProperty("background-color", "red");
           sheet.current.style.setProperty(
             "transform",
             `translateY(${minY - windowY}px)`

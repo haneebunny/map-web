@@ -11,12 +11,10 @@ import {
   TEMP,
 } from "../../common/config/constants";
 import { useEffect, useState } from "react";
-// const { BOTTOM_SHEET_HEIGHT, MIN_Y } = dynamic(
-//   () => {
-//     return import("../../common/config/constants");
-//   },
-//   { ssr: false }
-// );
+import Button from "../Button.js";
+
+// import tw from "twin.macro";
+// import tw, { css, theme } from "twin.macro";
 
 export default function BottomSheet() {
   const [sheetHeight, setSheetHeight] = useState();
@@ -38,7 +36,15 @@ export default function BottomSheet() {
       // className={`flex flex-col fixed z-10  left-0 right-0 rounded-t-md bg-white shadow-md transition-transform duration-700 ease-in-out`}
     >
       <BottomSheetHeader />
-      <div ref={content} className="overflow-touch">
+      <Button variant="primary">버튼</Button>
+      <div
+        // css={[
+        //   tw`flex w-full`, // Add base styles first
+        //   true && tw`bg-black`, // Then add conditional styles
+        // ]}
+        ref={content}
+        className="overflow-touch"
+      >
         <Content />
       </div>
     </Wrapper>

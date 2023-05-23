@@ -1,8 +1,9 @@
 /** @type {import('next').NextConfig} */
+const withTwin = require("./withTwin.js");
 const isProd = process.env.NODE_ENV === "production";
 const URL = "https://haneebunny.github.io/map-web/";
 
-const nextConfig = {
+const nextConfig = withTwin({
   reactStrictMode: true,
   swcMinify: true,
   images: {
@@ -10,7 +11,7 @@ const nextConfig = {
     path: isProd ? URL : "http://localhost:3000",
   },
   assetPrefix: isProd ? URL : " ./",
-  basePath: isProd ? "/map-web" : "",
-};
+  // basePath: "/",
+});
 
 module.exports = nextConfig;
