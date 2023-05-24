@@ -7,7 +7,8 @@ const POSITIONS = [
   "서울시 서초구 방배로18길 16",
   "서울시 동작구 여의대방로22아길 22",
 ];
-export default function KakaoMap(props) {
+
+export default function Map(props) {
   //지도
 
   useEffect(() => {
@@ -70,33 +71,13 @@ export default function KakaoMap(props) {
               }
             });
           });
-
-          // geocoder.addressSearch(
-          //   "서울시 서초구 방배로18길 16",
-          //   function (result, status) {
-          //     if (status === window.kakao.maps.services.Status.OK) {
-          //       const coords = new window.kakao.maps.LatLng(
-          //         result[0].y,
-          //         result[0].x
-          //       );
-
-          //       const marker = new window.kakao.maps.Marker({
-          //         map,
-          //         position: coords,
-          //         image: markerImage,
-          //       });
-
-          //       map.setCenter(coords);
-          //     }
-          //   }
-          // );
         });
       };
     }
   }, []);
 
   return (
-    <div className="w-full">
+    <div className="w-full relative">
       <div
         id="map"
         style={{
@@ -105,11 +86,14 @@ export default function KakaoMap(props) {
           position: "relative",
           overflow: "hidden",
         }}
-      ></div>
-      {/* <BaseLayer /> */}
-      <div className=" w-screen h-screen">
+      >
         <BottomSheet />
+
+        <button className="absolute z-10 bg-green-400">버튼버튼버튼</button>
       </div>
+      {/* <BaseLayer /> */}
+      <div className=" w-screen h-screen"></div>
+      <h1 className="  text-blue-300">H!!!</h1>
       <Modal />
     </div>
   );

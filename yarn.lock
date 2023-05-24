@@ -3171,6 +3171,11 @@ tailwindcss@3.3.2:
     resolve "^1.22.2"
     sucrase "^3.32.0"
 
+tailwindscss@0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/tailwindscss/-/tailwindscss-0.3.0.tgz#11bdbb920fadb80e885b83c4ad28ff9e75eda8c6"
+  integrity sha512-fv6JSA5tW++MUeZ8SUwBc3pihiHPDdZZrQlwxTr7igvCZZQ5NkK9yXvI7CZsm+KesG//rcq4CEkgA9d+pJwHtg==
+
 tapable@^2.2.0:
   version "2.2.1"
   resolved "https://registry.npmjs.org/tapable/-/tapable-2.2.1.tgz"
