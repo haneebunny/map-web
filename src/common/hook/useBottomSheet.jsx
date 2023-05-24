@@ -15,6 +15,7 @@ import { useRef, useEffect, useState } from "react";
 export function useBottomSheet() {
   const [minY, setMinY] = useState(60);
   const [maxY, setMaxY] = useState(0);
+  const [isUp, setIsUp] = useState(false);
 
   // console.log(minY, maxY);
   const sheet = useRef(null);
@@ -48,6 +49,7 @@ export function useBottomSheet() {
     // }
 
     const windowY = window.innerHeight;
+    const maxY = windowY - 160;
 
     const canUserMoveBottomSheet = () => {
       const { touchMove, isContentAreaTouched } = metrics.current;
@@ -69,15 +71,11 @@ export function useBottomSheet() {
     const handleTouchStart = (e) => {
       const { touchStart } = metrics.current;
       touchStart.sheetY = sheet.current?.getBoundingClientRect().y;
-      console.log(e.touches);
       touchStart.touchY = e.touches[0].clientY;
-      console.log("스타트", touchStart.touchY);
     };
     const handleTouchMove = (e) => {
       const { touchStart, touchMove } = metrics.current;
       const currentTouch = e.touches[0];
-      console.log("무브", touchMove.prevTouchY);
-      console.log("clientY", currentTouch.clientY);
       if (touchMove.prevTouchY === undefined) {
         touchMove.prevTouchY = touchStart.touchY;
       }
@@ -124,21 +122,27 @@ export function useBottomSheet() {
 
       const currentSheetY = sheet.current?.getBoundingClientRect().y;
 
+      console.log(currentSheetY, minY);
+
+      const transitionEnd = () => {
+        setIsUp(false);
+        console.log("endend");
+      };
       if (currentSheetY !== minY) {
         if (touchMove.movingDirection === "down") {
           sheet.current.style.setProperty("transform", "translateY(0)");
+          sheet.current.removeEventListener("transitionend", transitionEnd);
         }
 
         if (touchMove.movingDirection === "up") {
-          console.log("up");
-          console.log("minY-maxY", minY, maxY);
-          // sheet.current.style.setProperty("background-color", "red");
           sheet.current.style.setProperty(
             "transform",
-            `translateY(${minY - windowY}px)`
-            // "translateY(-300px)"
+            // `translateY(${minY - maxY}px)`
+            "translateY(-50%)"
           );
-          console.log("style", sheet.current.style);
+          console.log("dㅐ니시작");
+          setIsUp(true);
+          sheet.current.addEventListener("transitionend", transitionEnd);
         }
       }
 
@@ -156,7 +160,6 @@ export function useBottomSheet() {
       };
     };
 
-    console.log("sheet.current", sheet.current.style);
     sheet.current?.addEventListener("touchstart", handleTouchStart);
     sheet.current?.addEventListener("touchmove", handleTouchMove);
     sheet.current?.addEventListener("touchend", handleTouchEnd);
@@ -169,5 +172,5 @@ export function useBottomSheet() {
     content.current?.addEventListener("touchstart", handleTouchStart);
   }, []);
 
-  return { sheet, content };
+  return { sheet, content, isUp, setIsUp };
 }
