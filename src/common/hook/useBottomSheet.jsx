@@ -138,7 +138,7 @@ export function useBottomSheet() {
           sheet.current.style.setProperty(
             "transform",
             // `translateY(${minY - maxY}px)`
-            "translateY(-50%)"
+            "translateY(-30%)"
           );
           console.log("dㅐ니시작");
           setIsUp(true);
