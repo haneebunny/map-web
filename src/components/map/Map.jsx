@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import BaseLayer from "../bottomSheet/BaseLayer";
 import BottomSheet from "../bottomSheet/BottomSheet";
 import Modal from "../modal/Modal";
@@ -9,6 +9,8 @@ const POSITIONS = [
 ];
 
 export default function Map(props) {
+  const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+
   //지도
 
   useEffect(() => {
@@ -52,6 +54,25 @@ export default function Map(props) {
           // 지도 주소로 검색
           const geocoder = new window.kakao.maps.services.Geocoder();
 
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+              var lat = position.coords.latitude; // 위도
+              var lng = position.coords.longitude; // 경도
+
+              var markerPosition = new kakao.maps.LatLng(lat, lng);
+
+              // 마커를 생성하고 지도에 표시합니다.
+              var marker = new kakao.maps.Marker({
+                position: markerPosition,
+              });
+              marker.setMap(map);
+
+              // 지도의 중심을 현재 위치로 이동시킵니다.
+              map.setCenter(markerPosition);
+            });
+          }
+
+          // 주소로 검색한 마커
           POSITIONS.map((position) => {
             geocoder.addressSearch(position, function (result, status) {
               if (status === window.kakao.maps.services.Status.OK) {
@@ -66,6 +87,11 @@ export default function Map(props) {
                   image: markerImage,
                 });
 
+                // 마커 클릭
+                window.kakao.maps.event.addListener(marker, "click", () => {
+                  setIsBottomSheetVisible(!isBottomSheetVisible);
+                });
+
                 // 지도의 초점
                 map.setCenter(coords);
               }
@@ -76,8 +102,9 @@ export default function Map(props) {
     }
   }, []);
 
+  console.log(isBottomSheetVisible);
   return (
-    <div className="w-full relative">
+    <div className="w-full">
       <div
         id="map"
         style={{
@@ -87,7 +114,7 @@ export default function Map(props) {
           overflow: "hidden",
         }}
       >
-        <BottomSheet />
+        {isBottomSheetVisible && <BottomSheet />}
 
         <button className="absolute z-10 bg-green-400">버튼버튼버튼</button>
       </div>

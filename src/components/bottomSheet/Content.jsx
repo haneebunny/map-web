@@ -2,10 +2,6 @@ import { useEffect } from "react";
 
 export default function Content({ isUp, setIsUp, sheet }) {
   useEffect(() => {
-    sheet.current.addEventListener("touchstart", () => {
-      console.log("시시시작");
-    });
-
     // sheet.current.addEventListener("transitionend", () => {
     //   console.log("애니메이션긑");
     //   setIsUp(false);
