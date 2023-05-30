@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
-import BaseLayer from "../bottomSheet/BaseLayer";
+import { useEffect } from "react";
+import { useRecoilState } from "recoil";
+import { isBottomSheetVisibleState } from "../../common/store/atom";
 import BottomSheet from "../bottomSheet/BottomSheet";
 import Modal from "../modal/Modal";
 
@@ -9,7 +10,9 @@ const POSITIONS = [
 ];
 
 export default function Map(props) {
-  const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+  const [isBottomSheetVisible, setIsBottomSheetVisible] = useRecoilState(
+    isBottomSheetVisibleState
+  );
 
   //지도
 
@@ -54,6 +57,7 @@ export default function Map(props) {
           // 지도 주소로 검색
           const geocoder = new window.kakao.maps.services.Geocoder();
 
+          // 현재 위치 마커
           if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
               var lat = position.coords.latitude; // 위도
@@ -90,6 +94,7 @@ export default function Map(props) {
                 // 마커 클릭
                 window.kakao.maps.event.addListener(marker, "click", () => {
                   setIsBottomSheetVisible(!isBottomSheetVisible);
+                  console.log(isBottomSheetVisible);
                 });
 
                 // 지도의 초점
@@ -102,14 +107,13 @@ export default function Map(props) {
     }
   }, []);
 
-  console.log(isBottomSheetVisible);
   return (
     <div className="w-full">
       <div
         id="map"
         style={{
           width: "100%",
-          height: "500px",
+          height: "80vh",
           position: "relative",
           overflow: "hidden",
         }}
@@ -119,9 +123,6 @@ export default function Map(props) {
         <button className="absolute z-10 bg-green-400">버튼버튼버튼</button>
       </div>
       {/* <BaseLayer /> */}
-      <div className=" w-screen h-screen"></div>
-      <h1 className="  text-blue-300">H!!!</h1>
-      <Modal />
     </div>
   );
 }

@@ -3,18 +3,12 @@ import { useBottomSheet } from "../../common/hook/useBottomSheet";
 import { motion } from "framer-motion";
 import Content from "./Content";
 import styled from "@emotion/styled";
-import dynamic from "next/dynamic";
-import {
-  MIN_Y,
-  MAX_Y,
-  BOTTOM_SHEET_HEIGHT,
-} from "../../common/config/constants";
 import { useEffect, useState } from "react";
 
 export default function BottomSheet() {
   const [sheetHeight, setSheetHeight] = useState();
 
-  const { sheet, content, isUp, setIsUp } = useBottomSheet();
+  const { sheet, content } = useBottomSheet();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -30,7 +24,7 @@ export default function BottomSheet() {
     >
       <BottomSheetHeader />
       <div ref={content} className="overflow-touch">
-        <Content isUp={isUp} setIsUp={setIsUp} sheet={sheet} />
+        <Content />
       </div>
     </Wrapper>
   );
@@ -42,7 +36,7 @@ const Wrapper = styled(motion.div)`
 
   position: absolute;
   z-index: 10;
-  top: calc(100% - 220px); /*시트가 얼마나 높이 위치할지 90->50 변경*/
+  top: calc(100% - 210px); /*시트가 얼마나 높이 위치할지 90->50 변경*/
   left: 0;
   right: 0;
 

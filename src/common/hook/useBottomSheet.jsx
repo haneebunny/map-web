@@ -1,5 +1,6 @@
-import dynamic from "next/dynamic";
 import { useRef, useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
+import { isBottomSheetExpandedState } from "../store/atom";
 
 // interface BottomSheetMetrics {
 //   touchStart: {
@@ -15,7 +16,9 @@ import { useRef, useEffect, useState } from "react";
 export function useBottomSheet() {
   const [minY, setMinY] = useState(60);
   const [maxY, setMaxY] = useState(0);
-  const [isUp, setIsUp] = useState(false);
+  const [isBottomSheetExpanded, setIsBottomSheetExpanded] = useRecoilState(
+    isBottomSheetExpandedState
+  );
 
   // console.log(minY, maxY);
   const sheet = useRef(null);
@@ -90,6 +93,7 @@ export function useBottomSheet() {
       }
 
       if (touchMove.prevTouchY > currentTouch.clientY) {
+        setIsBottomSheetExpanded(true); // 여기 추가
         touchMove.movingDirection = "up";
       }
 
@@ -125,13 +129,20 @@ export function useBottomSheet() {
       console.log(currentSheetY, minY);
 
       const transitionEnd = () => {
-        setIsUp(false);
-        console.log("endend");
+        // setIsUp(true); // 원래 코드
+
+        if (touchMove?.movingDirection === "down") {
+          setIsBottomSheetExpanded(false);
+        } // 이 부분 추가
+
+        if (touchMove?.movingDirection === "up") {
+          setIsBottomSheetExpanded(true);
+        } // 이 부분 추가
       };
       if (currentSheetY !== minY) {
         if (touchMove.movingDirection === "down") {
           sheet.current.style.setProperty("transform", "translateY(0)");
-          sheet.current.removeEventListener("transitionend", transitionEnd);
+          // sheet.current.removeEventListener("transitionend", transitionEnd);
         }
 
         if (touchMove.movingDirection === "up") {
@@ -140,11 +151,18 @@ export function useBottomSheet() {
             // `translateY(${minY - maxY}px)`
             "translateY(-30%)"
           );
-          console.log("dㅐ니시작");
-          setIsUp(true);
-          sheet.current.addEventListener("transitionend", transitionEnd);
+
+          // sheet.current.addEventListener("transitionend", transitionEnd);
         }
       }
+
+      if (currentSheetY === minY) {
+        // setIsUp(false);
+        sheet.current.removeEventListener("transitionend", transitionEnd);
+        return; // 230530 ***
+      }
+
+      sheet.current.addEventListener("transitionend", transitionEnd);
 
       // metrics 초기화.
       metrics.current = {
@@ -163,7 +181,7 @@ export function useBottomSheet() {
     sheet.current?.addEventListener("touchstart", handleTouchStart);
     sheet.current?.addEventListener("touchmove", handleTouchMove);
     sheet.current?.addEventListener("touchend", handleTouchEnd);
-  }, []);
+  }, [isBottomSheetExpanded]);
 
   useEffect(() => {
     const handleTouchStart = () => {
@@ -172,5 +190,5 @@ export function useBottomSheet() {
     content.current?.addEventListener("touchstart", handleTouchStart);
   }, []);
 
-  return { sheet, content, isUp, setIsUp };
+  return { sheet, content };
 }
