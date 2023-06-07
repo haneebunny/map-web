@@ -24,6 +24,7 @@ class MyDocument extends Document {
       <Html>
         <Head>
           <script
+            type="text/javascript"
             src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=9d0f0e60b8c9641a75a00620cda24d1b&autoload=false&libraries=services//dapi.kakao.com/v2/maps/sdk.js?appkey=9d0f0e60b8c9641a75a00620cda24d1b&autoload=false&libraries=services`}
           />
         </Head>
