@@ -7,7 +7,7 @@ export default function useMap(mapContainer, setMarkerImage, markerImage, DB) {
 
   const makeMap = useCallback(() => {
     const options = {
-      center: new window.kakao.maps.LatLng(37.4932385, 126.9175228),
+      center: new window.kakao.maps.LatLng(35.1611293182418, 126.915927683652),
       level: window.innerHeight < 1300 ? 4 : 3, // 지도 확대 레벨
     };
     // 지도를 표시할 div와 지도 옵션으로 지도를 생성함
@@ -46,14 +46,15 @@ export default function useMap(mapContainer, setMarkerImage, markerImage, DB) {
 
     // 마커 표시하기
 
+    console.log(DB);
     const newMarkers = [];
-    DB.forEach((store) => {
+    DB.forEach((parkingLot) => {
       const marker = new kakao.maps.Marker({
         map: map, // 마커를 표시할 지도
-        title: store.FCLTY_NM, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됨
-        position: new kakao.maps.LatLng(store.FCLTY_LA, store.FCLTY_LO), // 마커를 표시할 위치(위도, 경도)
+        title: parkingLot.parkingName, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됨
+        position: new kakao.maps.LatLng(parkingLot.lat, parkingLot.lng), // 마커를 표시할 위치(위도, 경도)
         image: markerImage, // 커스텀 마커 이미지 설정
-        id: store.ESNTL_ID, // 마커에 ESNTL_ID를 id로 설정
+        id: parkingLot.parkingCode, // 마커에 ESNTL_ID를 id로 설정
       });
 
       // 마커 클릭시 해당 bookstoreId로 라우터 이동

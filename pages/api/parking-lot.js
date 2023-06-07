@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   if (req.method === "GET") {
     try {
       let { data } = await axios.get(
-        `${PARKING_LIST_URL}/?keyword=광주&parkingFee=무료&page=1&pageSize=2`
+        `${PARKING_LIST_URL}/?keyword=광주&parkingFee=무료&page=1&pageSize=30`
       );
 
       console.log("dd", data);
