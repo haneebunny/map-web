@@ -40,6 +40,7 @@ export default function Map(props) {
     const getParkingLotData = async () => {
       const { data } = await axios.get(`/api/parking-lot`);
       console.log("data::", data);
+      setDB(data);
     };
     getParkingLotData();
   }, []);
