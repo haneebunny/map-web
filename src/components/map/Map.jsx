@@ -1,14 +1,18 @@
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useQuery } from "react-query";
+import * as ReactDOMServer from "react-dom/server";
 import { useRecoilState } from "recoil";
-import { getParkingList } from "../../common/api/shine-vill";
+
+import { isBottomSheetVisibleState } from "../../common/store/atom";
+
 import { getParkingLotParams } from "../../common/config/parkingLot";
 import useMap from "../../common/hook/useMap";
-import { isBottomSheetVisibleState } from "../../common/store/atom";
+
+// Components
 import BottomSheet from "../bottomSheet/BottomSheet";
-import Modal from "../modal/Modal";
+import InfoOverlay from "./InfoOverlay";
+import { renderStylesToString } from "@emotion/server";
 
 const POSITIONS = [
   "서울시 서초구 방배로18길 16",
@@ -21,6 +25,12 @@ export default function Map(props) {
   );
 
   const [DB, setDB] = useState([]);
+
+  // DB에서 뽑아낸 하나의 주차장 정보
+  const [currentParkingLotInfo, setCurrentParkingLotInfo] = useState(null);
+
+  // 카카오맵 객체
+  const [currentParkingLot, setCurrentParkingLot] = useState(null);
 
   // 지도가 표시될 HTML element
   const mapContainer = useRef(null);
@@ -69,13 +79,18 @@ export default function Map(props) {
   }, [DB, makeMarkers, markerImage]);
 
   useEffect(() => {
-    moveMap(_id);
+    onClickMarker(_id);
   }, [_id, map]);
 
-  const moveMap = useCallback((_id) => {
+  const onClickMarker = useCallback((_id) => {
     if (!map) return;
 
-    // bookstoreId에 해당하는 마커로 지도 이동
+    // 기존 Info창이 있다면 삭제
+    if (currentParkingLot) currentParkingLot.setMap(null);
+
+    setIsBottomSheetVisible(true);
+
+    // 지도 이동
     DB.forEach((parkingLot) => {
       if (parkingLot.parkingCode === _id) {
         const moveLatLng = new kakao.maps.LatLng(
@@ -90,18 +105,20 @@ export default function Map(props) {
         map.panTo(moveLatLng); // 지도 중심 좌표 이동
 
         // 커스텀 오버레이 생성
-        // const overlayContent = ReactDOMServer.renderToString(
-        //   <Overlay info={parkingLot} />
-        // );
-        // const overlay = new kakao.maps.CustomOverlay({
-        //   content: overlayContent,
-        //   map: map,
-        //   position: moveLatLng,
-        //   xAnchor: 0.5,
-        //   yAnchor: 0.5,
-        // });
+        const overlayContent = renderStylesToString(
+          ReactDOMServer.renderToString(<InfoOverlay info={parkingLot} />)
+        );
 
-        // setCurrentOverlayStoreId(overlay);
+        const overlay = new kakao.maps.CustomOverlay({
+          content: overlayContent,
+          map: map,
+          position: moveLatLng,
+          xAnchor: 0.5,
+          yAnchor: 0.5,
+        });
+
+        setCurrentParkingLot(overlay);
+        setCurrentParkingLotInfo(parkingLot);
       }
     });
   });
@@ -112,12 +129,12 @@ export default function Map(props) {
         ref={mapContainer}
         style={{
           width: "100%",
-          height: "80vh",
+          height: "100vh",
           position: "relative",
           overflow: "hidden",
         }}
       >
-        {isBottomSheetVisible && <BottomSheet />}
+        <BottomSheet info={currentParkingLotInfo} />
 
         <button className="absolute z-10 bg-green-400">버튼버튼버튼</button>
       </div>
