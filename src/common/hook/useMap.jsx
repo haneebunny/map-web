@@ -21,13 +21,13 @@ export default function useMap(mapContainer, setMarkerImage, markerImage, DB) {
 
     // *마커이미지*
     const imageSrc = "/img/marker.png"; // 마커이미지의 주소
-    const imageSize = new window.kakao.maps.Size(64, 69); // 마커이미지의 크기
-    const imageOption = { offset: new window.kakao.maps.Point(27, 69) }; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+    const imageSize = new window.kakao.maps.Size(40, 40); // 마커이미지의 크기
+    // const imageOption = { offset: new window.kakao.maps.Point(27, 69) }; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
 
     const markerImage = new window.kakao.maps.MarkerImage(
       imageSrc,
-      imageSize,
-      imageOption
+      imageSize
+      // imageOption
     );
 
     setMarkerImage(markerImage);
@@ -47,7 +47,6 @@ export default function useMap(mapContainer, setMarkerImage, markerImage, DB) {
     }
 
     // 마커 표시하기
-
     const newMarkers = [];
     DB.forEach((parkingLot) => {
       const marker = new kakao.maps.Marker({

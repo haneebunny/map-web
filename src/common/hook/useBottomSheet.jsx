@@ -40,10 +40,8 @@ export function useBottomSheet() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       setMaxY(window.innerHeight - 160);
-      console.log(maxY);
     }
   }, []);
-  console.log(maxY);
   // if (typeof window !== "undefined") console.log(window.innerHeight - 160);
 
   useEffect(() => {

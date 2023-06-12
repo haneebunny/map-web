@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { isBottomSheetExpandedState } from "../../common/store/atom";
 
-export default function Content() {
+export default function Content({ info }) {
   const [isBottomSheetExpanded, _] = useRecoilState(isBottomSheetExpandedState);
 
   useEffect(() => {
@@ -11,11 +11,13 @@ export default function Content() {
     //   setIsUp(false);
     // });
   }, []);
+
+  console.log(info);
   return (
     <div className="w-full">
       <div className=" p-3">
         <p>
-          [(주)알트에이] <span className=" font-bold">벽산디지털밸리 2차</span>
+          [(주)알트에이] <span className=" font-bold">{info?.parkingName}</span>
         </p>
         <p className=" text-sm text-slate-500">
           서울시 금천구 가산디지털2로 184

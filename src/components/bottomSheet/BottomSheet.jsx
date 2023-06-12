@@ -1,11 +1,15 @@
-import BottomSheetHeader from "./BottomSheetHeader";
-import { useBottomSheet } from "../../common/hook/useBottomSheet";
-import { motion } from "framer-motion";
-import Content from "./Content";
 import styled from "@emotion/styled";
-import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
-export default function BottomSheet() {
+// hooks
+import { useEffect, useState } from "react";
+import { useBottomSheet } from "../../common/hook/useBottomSheet";
+
+// components
+import BottomSheetHeader from "./BottomSheetHeader";
+import Content from "./Content";
+
+export default function BottomSheet({ info }) {
   const [sheetHeight, setSheetHeight] = useState();
 
   const { sheet, content } = useBottomSheet();
@@ -24,7 +28,7 @@ export default function BottomSheet() {
     >
       <BottomSheetHeader />
       <div ref={content} className="overflow-touch">
-        <Content />
+        <Content info={info} />
       </div>
     </Wrapper>
   );
