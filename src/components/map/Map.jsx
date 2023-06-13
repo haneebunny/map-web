@@ -13,6 +13,7 @@ import useMap from "../../common/hook/useMap";
 import BottomSheet from "../bottomSheet/BottomSheet";
 import InfoOverlay from "./InfoOverlay";
 import { renderStylesToString } from "@emotion/server";
+import { renderToStringWithEmotion } from "../../common/api/function";
 
 const POSITIONS = [
   "서울시 서초구 방배로18길 16",
@@ -109,8 +110,11 @@ export default function Map(props) {
           ReactDOMServer.renderToString(<InfoOverlay info={parkingLot} />)
         );
 
+        const { html } = renderToStringWithEmotion(
+          <InfoOverlay info={parkingLot} />
+        );
         const overlay = new kakao.maps.CustomOverlay({
-          content: overlayContent,
+          content: html,
           map: map,
           position: moveLatLng,
           xAnchor: 0.5,

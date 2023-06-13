@@ -1,19 +1,19 @@
-import { flushSync } from "react-dom";
-import { createRoot } from "react-dom/client";
+import createCache from "@emotion/cache";
+import { CacheProvider } from "@emotion/react";
+import createEmotionServer from "@emotion/server/create-instance";
+import { renderToString } from "react-dom/server";
 
-// This is a solution to this problem: https://github.com/emotion-js/emotion/issues/2691
-// Did some basic testing and doesn't seem to degrade performance, some optimizations are most likely possible
-// Maybe turn it into a hook that returns a render function and have tempEl and root only be initialized once?
+export const renderToStringWithEmotion = (element) => {
+  const key = "dcr";
+  const cache = createCache({ key });
+  const emotionServer = createEmotionServer(cache);
 
-const elementToString = (element) => {
-  const tempEl = document.createElement("div");
-  const root = createRoot(tempEl);
+  const html = renderToString(
+    <CacheProvider value={cache}>{element}</CacheProvider>
+  );
 
-  flushSync(() => {
-    root.render(element);
-  });
+  const chunks = emotionServer.extractCriticalToChunks(html);
+  const extractedCss = emotionServer.constructStyleTagsFromChunks(chunks);
 
-  return tempEl.innerHTML;
+  return { html, extractedCss };
 };
-
-export default elementToString;
