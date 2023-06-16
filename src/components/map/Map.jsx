@@ -1,24 +1,15 @@
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import * as ReactDOMServer from "react-dom/server";
 import { useRecoilState } from "recoil";
-
-import { isBottomSheetVisibleState } from "../../common/store/atom";
-
-import { getParkingLotParams } from "../../common/config/parkingLot";
 import useMap from "../../common/hook/useMap";
+
+//
+import { isBottomSheetVisibleState } from "../../common/store/atom";
+import { getParkingLotParams } from "../../common/config/parkingLot";
 
 // Components
 import BottomSheet from "../bottomSheet/BottomSheet";
-import InfoOverlay from "./InfoOverlay";
-import { renderStylesToString } from "@emotion/server";
-import { renderToStringWithEmotion } from "../../../pages/api/function";
-
-const POSITIONS = [
-    "서울시 서초구 방배로18길 16",
-    "서울시 동작구 여의대방로22아길 22",
-];
 
 export default function Map(props) {
     const [isBottomSheetVisible, setIsBottomSheetVisible] = useRecoilState(
@@ -38,7 +29,7 @@ export default function Map(props) {
 
     const [markerImage, setMarkerImage] = useState(null);
 
-    const { makeMap, makeMarkers, map } = useMap(
+    const { makeMap, makeMarkers, map, markers } = useMap(
         mapContainer,
         setMarkerImage,
         markerImage,
@@ -49,10 +40,7 @@ export default function Map(props) {
 
     const { _id } = router.query;
 
-    // const { data: parkingDB } = useQuery(["DB", DB], () => getParkingList(), {
-    //   enabled: true,
-    // });
-
+    // 서버에 api요청해 데이터 받아오기
     useEffect(() => {
         const getParkingLotData = async () => {
             const { data } = await axios.get(`/api/parking-lot`, {
@@ -63,32 +51,40 @@ export default function Map(props) {
         };
         getParkingLotData();
     }, []);
-    // console.log(parkingDB);
+
     // 지도 생성
     useEffect(() => {
         kakao.maps.load(() => {
             makeMap();
         });
-        axios.postL;
-        // setDB(defaultDB);
-    }, [makeMap, setDB]);
+    }, []);
 
     // 마커 생성
     useEffect(() => {
         kakao.maps.load(() => {
             makeMarkers();
         });
-    }, [DB, makeMarkers, markerImage]);
+    }, [DB, _id]);
 
+    // 마커 클릭시
     useEffect(() => {
         onClickMarker(_id);
     }, [_id, map]);
+
+    // useEffect(() => {
+    //     if (currentParkingLot) {
+    //         currentParkingLot.setMap(null);
+    //     }
+    //     setCurrentParkingLotInfo(null);
+    // }, [markers]);
 
     const onClickMarker = useCallback((_id) => {
         if (!map) return;
 
         // 기존 Info창이 있다면 삭제
         if (currentParkingLot) currentParkingLot.setMap(null);
+
+        console.log("기존꺼삭제", currentParkingLot);
 
         setIsBottomSheetVisible(true);
 
@@ -106,21 +102,23 @@ export default function Map(props) {
                 }
                 await map.panTo(moveLatLng); // 지도 중심 좌표 이동
 
-                // 커스텀 오버레이 생성
+                // 커스텀 오버레이 생성 실패했던 것들
                 // const overlayContent = <InfoOverlay info={parkingLot} />;
-                const overlayContent = InfoOverlay((info = { parkingLot }));
+                // const overlayContent = InfoOverlay((info = { parkingLot }));
                 // const { html } = renderToStringWithEmotion(
                 //   <InfoOverlay info={parkingLot} />
                 // );
 
+                // renderToString을 서버에서 하면 emotion이 정상적으로 적용된다. (리액트v18 문제)
                 const { data } = await axios.post("/api/overlay", parkingLot);
 
                 const overlay = await new kakao.maps.CustomOverlay({
+                    clickable: true, // 컨텐츠 영역 클릭시 지도 이벤트를 막아준다.
                     content: data.html,
                     map: map,
                     position: moveLatLng,
-                    xAnchor: 0.5,
-                    yAnchor: 0.5,
+                    xAnchor: 0.5, // 컨텐츠의 x축 위치. 0_1사이의 값을 가진다.
+                    yAnchor: 0.5, // 컨텐츠의 y축 위치. 이하 동문
                 });
 
                 setCurrentParkingLot(overlay);
@@ -140,13 +138,8 @@ export default function Map(props) {
                     overflow: "hidden",
                 }}
             >
-                {/* <BottomSheet info={currentParkingLotInfo} /> */}
-
-                <button className="absolute z-10 bg-green-400">
-                    버튼버튼버튼
-                </button>
+                <BottomSheet info={currentParkingLotInfo} />
             </div>
-            {/* <BaseLayer /> */}
         </div>
     );
 }
