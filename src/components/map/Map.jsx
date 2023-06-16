@@ -107,10 +107,8 @@ export default function Map(props) {
                 await map.panTo(moveLatLng); // 지도 중심 좌표 이동
 
                 // 커스텀 오버레이 생성
-                // const overlayContent = renderStylesToString(
-                //   ReactDOMServer.renderToString(<InfoOverlay info={parkingLot} />)
-                // );
-
+                // const overlayContent = <InfoOverlay info={parkingLot} />;
+                const overlayContent = InfoOverlay((info = { parkingLot }));
                 // const { html } = renderToStringWithEmotion(
                 //   <InfoOverlay info={parkingLot} />
                 // );
@@ -142,7 +140,7 @@ export default function Map(props) {
                     overflow: "hidden",
                 }}
             >
-                <BottomSheet info={currentParkingLotInfo} />
+                {/* <BottomSheet info={currentParkingLotInfo} /> */}
 
                 <button className="absolute z-10 bg-green-400">
                     버튼버튼버튼
@@ -152,3 +150,4 @@ export default function Map(props) {
         </div>
     );
 }
+
