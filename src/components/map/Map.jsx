@@ -91,10 +91,7 @@ export default function Map(props) {
         // 지도 이동
         DB.forEach(async (parkingLot) => {
             if (parkingLot.parkingCode === _id) {
-                const moveLatLng = await new kakao.maps.LatLng(
-                    parkingLot.lat,
-                    parkingLot.lng
-                );
+                const moveLatLng = await new kakao.maps.LatLng(parkingLot.lat);
 
                 // 지도 확대 레벨 설정
                 if (map.getLevel() > 8) {

@@ -5,15 +5,16 @@ const queryClient = new QueryClient();
 import "../styles/globals.css";
 
 function MyApp({ Component, pageProps }) {
-  return (
-    <>
-      <RecoilRoot>
-        <QueryClientProvider client={queryClient}>
-          <Component {...pageProps} />
-        </QueryClientProvider>
-      </RecoilRoot>
-    </>
-  );
+    return (
+        <>
+            <RecoilRoot>
+                <QueryClientProvider client={queryClient}>
+                    <Component {...pageProps} />
+                </QueryClientProvider>
+            </RecoilRoot>
+        </>
+    );
 }
 
 export default MyApp;
+
