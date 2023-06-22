@@ -70,7 +70,7 @@ export default function Map(props) {
     // 마커 클릭시
     useEffect(() => {
         onClickMarker(_id);
-    }, [_id, map]);
+    }, [_id]);
 
     // useEffect(() => {
     //     if (currentParkingLot) {

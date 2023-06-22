@@ -11,7 +11,6 @@ import { noticeList } from "../src/common/store/atom";
 
 export default function MySocket() {
     const [socket, setSocket] = useState(null);
-    const [isConnected, setIsConnected] = useState(false);
     const [noticeState, setNoticeState] = useRecoilState(noticeList);
 
     useEffect(() => {
@@ -38,11 +37,10 @@ export default function MySocket() {
     const onNotice = (msg) => {
         // 기존 배열 복사
         const updateNotices = [...noticeState];
-        updateNotices.push(msg);
-        updateNotices.shift();
+        updateNotices.unshift(msg);
+        // updateNotices.shift();
 
         setNoticeState(updateNotices);
-        console.log(noticeList);
     };
 
     return (
@@ -52,7 +50,6 @@ export default function MySocket() {
                 {noticeState?.map((notice) => (
                     <div>{notice}</div>
                 ))}
-                {isConnected ? "Connected" : "Disconnected"}
             </p>
         </div>
     );
