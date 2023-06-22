@@ -1,31 +1,57 @@
 import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
 import io from "socket.io-client";
+import {
+    onChatMessage,
+    onConnect,
+    onDisconnect,
+    onGiveNotice,
+} from "../src/common/api/socket";
+import { noticeList } from "../src/common/store/atom";
 
-export default function SocketPage() {
+export default function MySocket() {
     const [socket, setSocket] = useState(null);
     const [isConnected, setIsConnected] = useState(false);
+    const [noticeState, setNoticeState] = useRecoilState(noticeList);
 
     useEffect(() => {
-        const socket = io("http://localhost:3001");
+        const socket = io("http://localhost:4000");
+
+        socket.connect();
+
         setSocket(socket);
 
-        socket.on("connect", () => {
-            setIsConnected(true);
-        });
+        socket.on("connect", onConnect);
 
-        socket.on("disconnect", () => {
-            setIsConnected(false);
-        });
+        socket.on("disconnect", onDisconnect);
+
+        socket.on("chat message", onChatMessage);
+
+        socket.on("notice", onNotice);
 
         return () => {
             socket.disconnect();
+            socket.off("connect", onConnect);
         };
     }, []);
+
+    const onNotice = (msg) => {
+        // 기존 배열 복사
+        const updateNotices = [...noticeState];
+        updateNotices.push(msg);
+        updateNotices.shift();
+
+        setNoticeState(updateNotices);
+        console.log(noticeList);
+    };
 
     return (
         <div>
             <p>
                 Socket Connection Status:{" "}
+                {noticeState?.map((notice) => (
+                    <div>{notice}</div>
+                ))}
                 {isConnected ? "Connected" : "Disconnected"}
             </p>
         </div>

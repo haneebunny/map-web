@@ -8,9 +8,10 @@ export const socket = io(URL);
 
 socket.on("connection", () => {
     console.log("연결!!!");
+    socket.emit("chat message");
 });
 
 socket.on("chat message", function (msg) {
-    console.log(msg);
+    console.log("src", msg);
 });
 

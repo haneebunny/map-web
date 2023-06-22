@@ -10,6 +10,7 @@ import { getParkingLotParams } from "../../common/config/parkingLot";
 
 // Components
 import BottomSheet from "../bottomSheet/BottomSheet";
+import ParkingLotInfo from "./ParkingLotInfo";
 
 export default function Map(props) {
     const [isBottomSheetVisible, setIsBottomSheetVisible] = useRecoilState(
@@ -135,6 +136,7 @@ export default function Map(props) {
                     overflow: "hidden",
                 }}
             >
+                <ParkingLotInfo />
                 <BottomSheet info={currentParkingLotInfo} />
             </div>
         </div>
