@@ -14,7 +14,6 @@ export default function Content({ info }) {
         // });
     }, []);
 
-    console.log(info);
     return (
         <div className="w-full">
             <div className=" p-4">

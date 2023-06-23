@@ -2,7 +2,13 @@ import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { useState } from "react";
 
-export default function useMap(mapContainer, setMarkerImage, markerImage, DB) {
+export default function useMap(
+    mapContainer,
+    setMarkerImage,
+    markerImage,
+    DB,
+    onClickMarker
+) {
     const router = useRouter();
     const [map, setMap] = useState(null);
     const [markers, setMarkers] = useState([]);
@@ -64,9 +70,13 @@ export default function useMap(mapContainer, setMarkerImage, markerImage, DB) {
             newMarkers.push(marker);
 
             // 마커 클릭시 해당 bookstoreId로 라우터 이동
-            kakao.maps.event.addListener(marker, "click", () =>
-                router.push(`/map/${parkingLot.parkingCode}`)
-            );
+            // kakao.maps.event.addListener(marker, "click", () =>
+            //     router.push(`/map/${parkingLot.parkingCode}`)
+            // );
+
+            kakao.maps.event.addListener(marker, "click", () => {
+                onClickMarker(parkingLot.parkingCode);
+            });
         });
 
         // 마커 배열을 state에 저장

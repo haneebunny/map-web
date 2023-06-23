@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import io from "socket.io-client";
 import {
@@ -33,6 +33,18 @@ export default function MySocket() {
             socket.off("connect", onConnect);
         };
     }, []);
+
+    const onConnect = useCallback(() => {
+        console.log("connected");
+    });
+
+    const onDisconnect = useCallback(() => {
+        console.log("disconnected");
+    });
+
+    const onChatMessage = (data) => {
+        console.log("chat::", data);
+    };
 
     const onNotice = (msg) => {
         // 기존 배열 복사
