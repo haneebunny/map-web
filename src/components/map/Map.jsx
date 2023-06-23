@@ -1,3 +1,4 @@
+import React from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -10,9 +11,9 @@ import { getParkingLotParams } from "../../common/config/parkingLot";
 
 // Components
 import BottomSheet from "../bottomSheet/BottomSheet";
-import ParkingLotInfo from "./ParkingLotInfo";
+import NoticeMessage from "./NoticeMessage";
 
-export default function Map(props) {
+function Map(props) {
     const [isBottomSheetVisible, setIsBottomSheetVisible] = useRecoilState(
         isBottomSheetVisibleState
     );
@@ -25,10 +26,30 @@ export default function Map(props) {
     // 카카오맵 객체
     const [currentParkingLot, setCurrentParkingLot] = useState();
 
+    const [markerImage, setMarkerImage] = useState(null);
+
+    const [isMobileSize, setIsMobileSize] = useState(false);
+
     // 지도가 표시될 HTML element
     const mapContainer = useRef(null);
 
-    const [markerImage, setMarkerImage] = useState(null);
+    const handleResize = () => {
+        if (window.innerWidth <= 767) {
+            setIsMobileSize(true);
+        } else {
+            setIsMobileSize(false);
+        }
+    };
+
+    useEffect(() => {
+        if (window.innerWidth <= 767) {
+            setIsMobileSize(true);
+        }
+        window.addEventListener("resize", handleResize);
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
+    }, [isMobileSize]);
 
     useEffect(() => {
         console.log(currentParkingLot);
@@ -185,6 +206,39 @@ export default function Map(props) {
     //     setCurrentParkingLotInfo(null);
     // }, [markers]);
 
+    // 현재 위치 표시
+    const showCurrentLocationMarker = useCallback(() => {
+        if (!navigator.geolocation) return;
+
+        navigator.geolocation.getCurrentPosition(function (position) {
+            const lat = position.coords.latitude; // 현재 위치의 위도
+            const lng = position.coords.longitude; // 현재 위치의 경도
+
+            const currentLocation = new kakao.maps.LatLng(lat, lng);
+
+            const imageSrc = "/img/point.png"; // 마커이미지의 주소
+            const imageSize = new window.kakao.maps.Size(40, 40); // 마커이미지의 크기
+            const markerImage = new window.kakao.maps.MarkerImage(
+                imageSrc,
+                imageSize
+                // imageOption
+            );
+
+            const markerCurrentLocation = new kakao.maps.Marker({
+                position: currentLocation,
+                image: markerImage,
+                // message : '<div>여기에 계신가요?</div>',
+                title: "Current Location",
+            });
+
+            // 마커 표시
+            markerCurrentLocation.setMap(map);
+
+            // 마커 좌표로 이동
+            map.panTo(currentLocation);
+        });
+    });
+
     return (
         <div className="w-full">
             <div
@@ -196,10 +250,18 @@ export default function Map(props) {
                     overflow: "hidden",
                 }}
             >
-                <ParkingLotInfo />
-                <BottomSheet info={currentParkingLotInfo} />
+                <NoticeMessage />
+                <button
+                    className="w-20 h-5 z-30 absolute left-1/2 bg-amber-200"
+                    onClick={showCurrentLocationMarker}
+                >
+                    내 위치
+                </button>
+                {isMobileSize && <BottomSheet info={currentParkingLotInfo} />}
             </div>
         </div>
     );
 }
+
+export default React.memo(Map);
 

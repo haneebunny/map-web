@@ -10,8 +10,8 @@ export const isBottomSheetVisibleState = atom({
     default: false,
 });
 
-export const noticeList = atom({
-    key: "noticeList",
+export const noticeListState = atom({
+    key: "noticeListState",
     default: [],
 });
 

@@ -1,17 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import io from "socket.io-client";
-import {
-    onChatMessage,
-    onConnect,
-    onDisconnect,
-    onGiveNotice,
-} from "../src/common/api/socket";
-import { noticeList } from "../src/common/store/atom";
+import { noticeListState } from "../src/common/store/atom";
 
 export default function MySocket() {
     const [socket, setSocket] = useState(null);
-    const [noticeState, setNoticeState] = useRecoilState(noticeList);
+    const [noticeState, setNoticeState] = useRecoilState(noticeListState);
 
     useEffect(() => {
         const socket = io("http://localhost:4000");
@@ -47,6 +41,7 @@ export default function MySocket() {
     };
 
     const onNotice = (msg) => {
+        console.log(msg);
         // 기존 배열 복사
         const updateNotices = [...noticeState];
         updateNotices.unshift(msg);
@@ -55,15 +50,6 @@ export default function MySocket() {
         setNoticeState(updateNotices);
     };
 
-    return (
-        <div>
-            <p>
-                Socket Connection Status:{" "}
-                {noticeState?.map((notice) => (
-                    <div>{notice}</div>
-                ))}
-            </p>
-        </div>
-    );
+    return;
 }
 

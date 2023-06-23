@@ -6,7 +6,7 @@ export default function Home() {
     return (
         <div className={styles.container}>
             <h2 className="text-3xl font-bold underline">KakaoMap</h2>
-            <Link href="/map/hi" className="text-5xl  text-rose-500">
+            <Link href="/map/hi" className="text-5xl  text-blue-500">
                 지도!
             </Link>
             <Wrapper>안녕안녕</Wrapper>
