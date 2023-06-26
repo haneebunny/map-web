@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 import useMap from "../../common/hook/useMap";
 
+import { BiCurrentLocation } from "react-icons/bi";
 //
 import { isBottomSheetVisibleState } from "../../common/store/atom";
 import { getParkingLotParams } from "../../common/config/parkingLot";
@@ -24,11 +25,17 @@ function Map(props) {
     const [currentParkingLotInfo, setCurrentParkingLotInfo] = useState(null);
 
     // 카카오맵 객체
-    const [currentParkingLot, setCurrentParkingLot] = useState();
+    const [currentParkingLot, setCurrentParkingLot] = useState([]);
 
     const [markerImage, setMarkerImage] = useState(null);
 
     const [isMobileSize, setIsMobileSize] = useState(false);
+
+    const [currentLocationMarker, setCurrentLocationMarker] = useState([]);
+
+    // 현재 위치 표시 마커 활성화 여부
+    const [isActiveCurrentLocation, setIsActiveCurrentLocation] =
+        useState(false);
 
     // 지도가 표시될 HTML element
     const mapContainer = useRef(null);
@@ -51,33 +58,37 @@ function Map(props) {
         };
     }, [isMobileSize]);
 
+    // useEffect(() => {
+    //     console.log(currentParkingLot);
+    //     if (currentParkingLot) {
+    //         currentParkingLot.setMap(map);
+    //     }
+    // }, [currentParkingLot]);
+
     useEffect(() => {
-        console.log(currentParkingLot);
-        if (currentParkingLot) {
-            currentParkingLot.setMap(map);
-        }
+        console.log("useEffect::", currentParkingLot);
     }, [currentParkingLot]);
 
+    console.log(currentParkingLot);
     const onClickMarker = useCallback(async (_id) => {
         if (!map) return;
+        console.log("onClickMarker");
 
-        console.log("마커1", currentParkingLot);
         // // 기존 Info창이 있다면 삭제
         // if (currentParkingLot) await currentParkingLot.setMap(null);
 
-        if (currentParkingLot) {
-            currentParkingLot.setMap(null);
-            // currentParkingLot.setMap(null);
-            // setCurrentParkingLot(null);
+        let parkingLotArray = [...currentParkingLot];
+
+        if (parkingLotArray.length > 0) {
+            parkingLotArray.forEach((parkingLot) => {
+                parkingLot.setMap(null);
+            });
+            parkingLotArray = [];
         }
-        console.log(currentParkingLot);
+
+        console.log("par", parkingLotArray);
 
         setIsBottomSheetVisible(true);
-
-        if (currentParkingLot) {
-            currentParkingLot.setMap(null);
-            setCurrentParkingLot(null);
-        }
 
         const parkingLot = DB.find((lot) => lot.parkingCode === _id);
         if (!parkingLot) return;
@@ -104,54 +115,29 @@ function Map(props) {
             yAnchor: 0.5, // 컨텐츠의 y축 위치. 이하 동문
         });
 
-        setCurrentParkingLot(overlay); // currentParkingLot에 overlay 할당
-
         setCurrentParkingLotInfo(parkingLot);
 
-        if (currentParkingLot) {
-            currentParkingLot.setMap(map); // overlay를 지도에 표시
-        }
-
-        // // 지도 이동
-        // DB.forEach(async (parkingLot) => {
-        //     if (parkingLot.parkingCode === _id) {
-        //         const moveLatLng = await new kakao.maps.LatLng(
-        //             parkingLot.lat,
-        //             parkingLot.lng
-        //         );
-
-        //         // 지도 확대 레벨 설정
-        //         if (map.getLevel() > 8) {
-        //             await map.setLevel(8);
-        //         }
-        //         await map.panTo(moveLatLng); // 지도 중심 좌표 이동
-
-        //         // 커스텀 오버레이 생성 실패했던 것들
-        //         // const overlayContent = <InfoOverlay info={parkingLot} />;
-        //         // const overlayContent = InfoOverlay((info = { parkingLot }));
-        //         // const { html } = renderToStringWithEmotion(
-        //         //   <InfoOverlay info={parkingLot} />
-        //         // );
-
-        //         // renderToString을 서버에서 하면 emotion이 정상적으로 적용된다. (리액트v18 문제)
-        //         const { data } = await axios.post("/api/overlay", parkingLot);
-
-        //         const overlay = new kakao.maps.CustomOverlay({
-        //             clickable: true, // 컨텐츠 영역 클릭시 지도 이벤트를 막아준다.
-        //             content: data.html,
-        //             // map: map,
-        //             position: moveLatLng,
-        //             xAnchor: 0.5, // 컨텐츠의 x축 위치. 0_1사이의 값을 가진다.
-        //             yAnchor: 0.5, // 컨텐츠의 y축 위치. 이하 동문
-        //         });
-
-        //         setCurrentParkingLot({ ...overlay });
-
-        //         // currentParkingLot.setMap(map);
-
-        //         setCurrentParkingLotInfo(parkingLot);
-        //     }
+        // setCurrentParkingLot((parkingLot) => {
+        //     parkingLot.forEach((infoOverlay) => infoOverlay.setMap(null));
+        //     return [overlay];
         // });
+
+        parkingLotArray.unshift(overlay);
+
+        // currentParkingLot[0].setMap(null);
+        console.log("null", currentParkingLot);
+
+        console.log(parkingLotArray);
+
+        // if (parkingLotArray.length > 0) {
+        //     parkingLotArray.forEach((parkingLot) => parkingLot.setMap(map)); // overlay를 지도에 표시
+        // }
+
+        setCurrentParkingLot((prev) => {
+            const newParkingLot = [...prev, overlay];
+            newParkingLot.forEach((parkingLot) => parkingLot.setMap(map));
+            return newParkingLot;
+        });
     });
 
     const { makeMap, makeMarkers, map, markers } = useMap(
@@ -172,7 +158,6 @@ function Map(props) {
             const { data } = await axios.get(`/api/parking-lot`, {
                 params: getParkingLotParams,
             });
-
             setDB(data);
         };
         getParkingLotData();
@@ -208,7 +193,24 @@ function Map(props) {
 
     // 현재 위치 표시
     const showCurrentLocationMarker = useCallback(() => {
+        console.log(map);
         if (!navigator.geolocation) return;
+        setIsActiveCurrentLocation(true);
+
+        // const newMarkers = markerPositions.map(
+        //     (position) =>
+        //         new kakao.maps.Marker({
+        //             map: map,
+        //             position,
+        //             image: markerImage,
+        //         })
+        // );
+        // setMarkers(
+        //     (markers) => markers.forEach((marker) => marker.setMap(null))
+
+        //     //이전에 생성된 마커도 관리하려면 아래와 같이 return 해주세요.
+        //     // return markers.concat(newMarkers); //이전에 생성된 마커 + 새로 생성한 마커
+        // );
 
         navigator.geolocation.getCurrentPosition(function (position) {
             const lat = position.coords.latitude; // 현재 위치의 위도
@@ -231,8 +233,14 @@ function Map(props) {
                 title: "Current Location",
             });
 
-            // 마커 표시
+            // await setCurrentLocationMarker(markerCurrentLocation);
+            // // 마커 표시
+            // if (currentLocationMarker) {
+            //     currentLocationMarker.setMap(map);
+            // }
+
             markerCurrentLocation.setMap(map);
+            // currentLocationMarker.push(markerCurrentLocation);
 
             // 마커 좌표로 이동
             map.panTo(currentLocation);
@@ -252,10 +260,18 @@ function Map(props) {
             >
                 <NoticeMessage />
                 <button
-                    className="w-20 h-5 z-30 absolute left-1/2 bg-amber-200"
+                    className="w-8 h-8 z-30 absolute right-1  bottom-1/3 bg-white
+                      shadow-lg  rounded-md
+                    "
                     onClick={showCurrentLocationMarker}
                 >
-                    내 위치
+                    <BiCurrentLocation
+                        className={`text-xl m-auto ${
+                            isActiveCurrentLocation
+                                ? "text-amber-400"
+                                : "text-gray-600"
+                        }`}
+                    />
                 </button>
                 {isMobileSize && <BottomSheet info={currentParkingLotInfo} />}
             </div>
