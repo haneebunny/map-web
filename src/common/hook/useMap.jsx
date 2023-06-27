@@ -12,6 +12,8 @@ export default function useMap(
     const router = useRouter();
     const [map, setMap] = useState(null);
     const [markers, setMarkers] = useState([]);
+    const [markerImageB, setMarkerImageB] = useState(null);
+    const [markerImageY, setMarkerImageY] = useState(null);
 
     const makeMap = useCallback(() => {
         const options = {
@@ -29,17 +31,25 @@ export default function useMap(
         newMap.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
 
         // 마커이미지
-        const imageSrc = "/img/marker.png"; // 마커이미지의 주소
+        const imageSrcY = "/img/marker_yellow.png"; // 마커이미지의 주소
+        const imageSrcB = "/img/marker_blue.png";
         const imageSize = new window.kakao.maps.Size(40, 40); // 마커이미지의 크기
         // const imageOption = { offset: new window.kakao.maps.Point(27, 69) }; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
 
-        const markerImage = new window.kakao.maps.MarkerImage(
-            imageSrc,
+        const markerImageY = new window.kakao.maps.MarkerImage(
+            imageSrcY,
             imageSize
-            // imageOption
         );
 
-        setMarkerImage(markerImage);
+        const markerImageB = new window.kakao.maps.MarkerImage(
+            imageSrcB,
+            imageSize
+        );
+
+        setMarkerImageY(markerImageY);
+        setMarkerImageB(markerImageB);
+
+        // setMarkerImage(markerImage);
 
         setMap(newMap);
 
@@ -56,14 +66,17 @@ export default function useMap(
             copiedMarkers.forEach((marker) => marker.setMap(null));
         }
 
+        console.log(DB);
         // 마커 표시하기
         const newMarkers = [];
-        DB.forEach((parkingLot) => {
+        DB?.forEach((parkingLot) => {
+            console.log(parkingLot);
             const marker = new kakao.maps.Marker({
                 map: map, // 마커를 표시할 지도
                 title: parkingLot.parkingName, // 마커의 이름
                 position: new kakao.maps.LatLng(parkingLot.lat, parkingLot.lng), // 마커를 표시할 위치(위도, 경도)
-                image: markerImage,
+                image:
+                    parkingLot.payYn === "무료" ? markerImageB : markerImageY,
                 id: parkingLot.parkingCode,
             });
 
@@ -92,7 +105,7 @@ export default function useMap(
 
         // 마커 클러스터에 추가
         cluster.addMarkers(newMarkers);
-    }, [DB, map, markerImage]);
+    }, [DB, map, markerImageB, markerImageY]);
 
     return { makeMap, makeMarkers, map, markers };
 }

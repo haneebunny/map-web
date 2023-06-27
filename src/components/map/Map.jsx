@@ -143,8 +143,8 @@ function Map(props) {
 
     const { makeMap, makeMarkers, map, markers } = useMap(
         mapContainer,
-        setMarkerImage,
-        markerImage,
+        // setMarkerImage,
+        // markerImage,
         DB,
         onClickMarker
     );
