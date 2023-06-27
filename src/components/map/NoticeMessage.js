@@ -35,7 +35,7 @@ export default function NoticeMessage() {
                 // 숫자 부분만 색을 다르게 처리
                 const coloredNumber = parts[1]?.replace(
                     /\b(\d+)\b/g,
-                    "<span style='color: #914abd'>$1</span>"
+                    "<span style='color: #00556d'>$1</span>"
                 );
                 setColoredNumber(coloredNumber);
             } else {
@@ -64,15 +64,13 @@ export default function NoticeMessage() {
 
     return (
         <MessageBox
-            isVisible={isMessageVisible}
-            className="absolute left-[50%] top-10 z-10"
+            isVisible={true}
+            className="w-auto min-w-[300px] fixed left-[50%] top-20  -translate-x-1/2 -translate-y-1/2 z-10 flex flex-row justify-center items-center"
         >
-            <div className="px-3 py-1  text-white bg-opacity-80 bg-[#5db5a8]  rounded-2xl">
+            <div className="px-3 py-1  text-white bg-opacity-80 bg-[#5db5a8]   rounded-2xl">
                 {parkingLotName && coloredNumber && (
                     <>
-                        <span className="font-bold">
-                            [{parkingLotName} 주차장]{" "}
-                        </span>
+                        <span className="font-bold">[{parkingLotName}] </span>
                         <span
                             dangerouslySetInnerHTML={{
                                 __html: coloredNumber,

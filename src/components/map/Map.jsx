@@ -84,10 +84,10 @@ function Map(props) {
         if (!isEmpty) {
             console.log(copiedParkingLot !== {});
             console.log(copiedParkingLot);
-            copiedParkingLot.setMap(null).then((result) => {
-                console.log(result);
-                copiedParkingLot = {};
-            });
+            // copiedParkingLot.setMap(null).then((result) => {
+            //     console.log(result);
+            //     copiedParkingLot = {};
+            // });
         }
 
         // 바텀시트 활성화
@@ -126,19 +126,19 @@ function Map(props) {
         //     return [overlay];
         // });
 
-        copiedParkingLot = overlay;
+        // copiedParkingLot = overlay;
 
-        console.log("null", copiedParkingLot);
+        // console.log("null", copiedParkingLot);
 
-        console.log(copiedParkingLot);
+        // console.log(copiedParkingLot);
 
-        if (!isEmpty) {
-            console.log(copiedParkingLot);
+        // if (!isEmpty) {
+        //     console.log(copiedParkingLot);
 
-            copiedParkingLot.setMap(map); // overlay를 지도에 표시
-        }
+        //     copiedParkingLot.setMap(map); // overlay를 지도에 표시
+        // }
 
-        setCurrentParkingLot({ ...copiedParkingLot });
+        // setCurrentParkingLot({ ...copiedParkingLot });
     });
 
     const { makeMap, makeMarkers, map, markers } = useMap(
@@ -240,8 +240,9 @@ function Map(props) {
         });
     });
 
+    console.log(currentParkingLotInfo);
     return (
-        <div className="w-full">
+        <div className="w-full sm:text-sm">
             <div
                 ref={mapContainer}
                 style={{
@@ -261,12 +262,17 @@ function Map(props) {
                     <BiCurrentLocation
                         className={`text-xl m-auto ${
                             isActiveCurrentLocation
-                                ? "text-amber-400"
+                                ? "text-emerald-500"
                                 : "text-gray-600"
                         }`}
                     />
                 </button>
-                {isMobileSize && <BottomSheet info={currentParkingLotInfo} />}
+                {isMobileSize && currentParkingLotInfo && (
+                    <BottomSheet
+                        info={currentParkingLotInfo}
+                        setCurrentParkingLotInfo={setCurrentParkingLotInfo}
+                    />
+                )}
             </div>
         </div>
     );

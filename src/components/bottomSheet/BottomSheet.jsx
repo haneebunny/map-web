@@ -9,7 +9,7 @@ import { useBottomSheet } from "../../common/hook/useBottomSheet";
 import BottomSheetHeader from "./BottomSheetHeader";
 import Content from "./Content";
 
-export default function BottomSheet({ info }) {
+export default function BottomSheet({ info, setCurrentParkingLotInfo }) {
     const [sheetHeight, setSheetHeight] = useState();
 
     const { sheet, content } = useBottomSheet();
@@ -18,6 +18,10 @@ export default function BottomSheet({ info }) {
         if (typeof window !== "undefined") {
             setSheetHeight(window.innerHeight - 60);
         }
+
+        return () => {
+            // setCurrentParkingLotInfo(null);
+        };
     }, []);
 
     return (
@@ -40,7 +44,7 @@ const Wrapper = styled(motion.div)`
 
     position: absolute;
     z-index: 10;
-    top: calc(100% - 210px); /*시트가 얼마나 높이 위치할지 90->50 변경*/
+    top: calc(100% - 240px); /*시트가 얼마나 높이 위치할지 90->50 변경*/
     left: 0;
     right: 0;
 
