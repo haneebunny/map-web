@@ -2,18 +2,18 @@ import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { useState } from "react";
 
-export default function useMap(
+export default function useMap({
     mapContainer,
-    setMarkerImage,
-    markerImage,
+    setMarkerImageB,
+    setMarkerImageY,
+    markerImageB,
+    markerImageY,
     DB,
-    onClickMarker
-) {
+    onClickMarker,
+}) {
     const router = useRouter();
     const [map, setMap] = useState(null);
     const [markers, setMarkers] = useState([]);
-    const [markerImageB, setMarkerImageB] = useState(null);
-    const [markerImageY, setMarkerImageY] = useState(null);
 
     const makeMap = useCallback(() => {
         const options = {
@@ -49,16 +49,14 @@ export default function useMap(
         setMarkerImageY(markerImageY);
         setMarkerImageB(markerImageB);
 
-        // setMarkerImage(markerImage);
-
         setMap(newMap);
 
         // makeMap
-    }, [mapContainer, setMarkerImage]);
+    }, [mapContainer]);
 
     // 마커, 클러스터 생성
     const makeMarkers = useCallback(() => {
-        if (!markerImage) return;
+        if (!markerImageB || !markerImageY) return;
 
         // 기존 마커 제거
         if (markers.length > 0) {
@@ -66,11 +64,9 @@ export default function useMap(
             copiedMarkers.forEach((marker) => marker.setMap(null));
         }
 
-        console.log(DB);
         // 마커 표시하기
         const newMarkers = [];
-        DB?.forEach((parkingLot) => {
-            console.log(parkingLot);
+        DB.forEach((parkingLot) => {
             const marker = new kakao.maps.Marker({
                 map: map, // 마커를 표시할 지도
                 title: parkingLot.parkingName, // 마커의 이름

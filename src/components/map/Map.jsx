@@ -5,7 +5,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 import useMap from "../../common/hook/useMap";
 
-import { BiCurrentLocation } from "react-icons/bi";
 //
 import {
     currentParkingLotState,
@@ -16,6 +15,7 @@ import { getParkingLotParams } from "../../common/config/parkingLot";
 // Components
 import BottomSheet from "../bottomSheet/BottomSheet";
 import NoticeMessage from "./NoticeMessage";
+import MyLocation from "./MyLocation";
 
 function Map(props) {
     const [isBottomSheetVisible, setIsBottomSheetVisible] = useRecoilState(
@@ -33,14 +33,14 @@ function Map(props) {
     );
 
     const [markerImage, setMarkerImage] = useState(null);
+    const [markerImageB, setMarkerImageB] = useState(null);
+    const [markerImageY, setMarkerImageY] = useState(null);
 
     const [isMobileSize, setIsMobileSize] = useState(false);
 
-    const [currentLocationMarker, setCurrentLocationMarker] = useState([]);
+    const router = useRouter();
 
-    // 현재 위치 표시 마커 활성화 여부
-    const [isActiveCurrentLocation, setIsActiveCurrentLocation] =
-        useState(false);
+    const { _id } = router.query;
 
     // 지도가 표시될 HTML element
     const mapContainer = useRef(null);
@@ -76,19 +76,14 @@ function Map(props) {
         // // 기존 Info창이 있다면 삭제
         // if (currentParkingLot) await currentParkingLot.setMap(null);
 
-        let copiedParkingLot = { ...currentParkingLot };
+        let copiedParkingLot = [...currentParkingLot];
 
-        let isEmpty = Object.entries(copiedParkingLot).length === 0;
-        console.log(currentParkingLot, copiedParkingLot);
-
-        if (!isEmpty) {
-            console.log(copiedParkingLot !== {});
-            console.log(copiedParkingLot);
-            // copiedParkingLot.setMap(null).then((result) => {
-            //     console.log(result);
-            //     copiedParkingLot = {};
-            // });
+        if (currentParkingLot.length) {
+            currentParkingLot.map((overlay) => overlay.setMap(null));
+            setCurrentParkingLot([]);
         }
+
+        console.log("하이", currentParkingLot);
 
         // 바텀시트 활성화
         setIsBottomSheetVisible(true);
@@ -118,40 +113,32 @@ function Map(props) {
             yAnchor: 0.5, // 컨텐츠의 y축 위치. 이하 동문
         });
 
+        copiedParkingLot.push(overlay);
+        setCurrentParkingLot((prev) => [overlay]);
+
         // overlay에 들어갈 Info
         setCurrentParkingLotInfo(parkingLot);
-
-        // setCurrentParkingLot((parkingLot) => {
-        //     parkingLot.forEach((infoOverlay) => infoOverlay.setMap(null));
-        //     return [overlay];
-        // });
-
-        // copiedParkingLot = overlay;
-
-        // console.log("null", copiedParkingLot);
-
-        // console.log(copiedParkingLot);
-
-        // if (!isEmpty) {
-        //     console.log(copiedParkingLot);
-
-        //     copiedParkingLot.setMap(map); // overlay를 지도에 표시
-        // }
-
-        // setCurrentParkingLot({ ...copiedParkingLot });
     });
 
-    const { makeMap, makeMarkers, map, markers } = useMap(
+    const { makeMap, makeMarkers, map, markers } = useMap({
         mapContainer,
-        // setMarkerImage,
-        // markerImage,
+        setMarkerImageB,
+        setMarkerImageY,
+        markerImageB,
+        markerImageY,
         DB,
-        onClickMarker
-    );
+        onClickMarker,
+    });
 
-    const router = useRouter();
-
-    const { _id } = router.query;
+    useEffect(() => {
+        if (!map) return;
+        console.log(map);
+        console.log(currentParkingLot);
+        if (currentParkingLot.length) {
+            console.log("안", currentParkingLot);
+            currentParkingLot.map((overlay) => overlay && overlay.setMap(null));
+        }
+    }, [map, currentParkingLot]);
 
     // 서버에 api요청해 데이터 받아오기
     useEffect(() => {
@@ -185,62 +172,6 @@ function Map(props) {
     //     onClickMarker(_id);
     // }, [_id]);
 
-    // 현재 위치 표시
-    const showCurrentLocationMarker = useCallback(() => {
-        console.log(map);
-        if (!navigator.geolocation) return;
-        setIsActiveCurrentLocation(true);
-
-        // const newMarkers = markerPositions.map(
-        //     (position) =>
-        //         new kakao.maps.Marker({
-        //             map: map,
-        //             position,
-        //             image: markerImage,
-        //         })
-        // );
-        // setMarkers(
-        //     (markers) => markers.forEach((marker) => marker.setMap(null))
-
-        //     //이전에 생성된 마커도 관리하려면 아래와 같이 return 해주세요.
-        //     // return markers.concat(newMarkers); //이전에 생성된 마커 + 새로 생성한 마커
-        // );
-
-        navigator.geolocation.getCurrentPosition(function (position) {
-            const lat = position.coords.latitude; // 현재 위치의 위도
-            const lng = position.coords.longitude; // 현재 위치의 경도
-
-            const currentLocation = new kakao.maps.LatLng(lat, lng);
-
-            const imageSrc = "/img/point.png"; // 마커이미지의 주소
-            const imageSize = new window.kakao.maps.Size(40, 40); // 마커이미지의 크기
-            const markerImage = new window.kakao.maps.MarkerImage(
-                imageSrc,
-                imageSize
-                // imageOption
-            );
-
-            const markerCurrentLocation = new kakao.maps.Marker({
-                position: currentLocation,
-                image: markerImage,
-                // message : '<div>여기에 계신가요?</div>',
-                title: "Current Location",
-            });
-
-            // await setCurrentLocationMarker(markerCurrentLocation);
-            // // 마커 표시
-            // if (currentLocationMarker) {
-            //     currentLocationMarker.setMap(map);
-            // }
-
-            markerCurrentLocation.setMap(map);
-
-            // 마커 좌표로 이동
-            map.panTo(currentLocation);
-        });
-    });
-
-    console.log(currentParkingLotInfo);
     return (
         <div className="w-full sm:text-sm">
             <div
@@ -253,20 +184,7 @@ function Map(props) {
                 }}
             >
                 <NoticeMessage />
-                <button
-                    className="w-8 h-8 z-30 absolute right-1  bottom-1/3 bg-white
-                      shadow-lg  rounded-md
-                    "
-                    onClick={showCurrentLocationMarker}
-                >
-                    <BiCurrentLocation
-                        className={`text-xl m-auto ${
-                            isActiveCurrentLocation
-                                ? "text-emerald-500"
-                                : "text-gray-600"
-                        }`}
-                    />
-                </button>
+                <MyLocation map={map} />
                 {isMobileSize && currentParkingLotInfo && (
                     <BottomSheet
                         info={currentParkingLotInfo}
