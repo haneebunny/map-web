@@ -7,7 +7,10 @@ import useMap from "../../common/hook/useMap";
 
 import { BiCurrentLocation } from "react-icons/bi";
 //
-import { isBottomSheetVisibleState } from "../../common/store/atom";
+import {
+    currentParkingLotState,
+    isBottomSheetVisibleState,
+} from "../../common/store/atom";
 import { getParkingLotParams } from "../../common/config/parkingLot";
 
 // Components
@@ -25,7 +28,9 @@ function Map(props) {
     const [currentParkingLotInfo, setCurrentParkingLotInfo] = useState(null);
 
     // 카카오맵 객체
-    const [currentParkingLot, setCurrentParkingLot] = useState([]);
+    const [currentParkingLot, setCurrentParkingLot] = useRecoilState(
+        currentParkingLotState
+    );
 
     const [markerImage, setMarkerImage] = useState(null);
 
@@ -65,29 +70,27 @@ function Map(props) {
     //     }
     // }, [currentParkingLot]);
 
-    useEffect(() => {
-        console.log("useEffect::", currentParkingLot);
-    }, [currentParkingLot]);
-
-    console.log(currentParkingLot);
     const onClickMarker = useCallback(async (_id) => {
         if (!map) return;
-        console.log("onClickMarker");
 
         // // 기존 Info창이 있다면 삭제
         // if (currentParkingLot) await currentParkingLot.setMap(null);
 
-        let parkingLotArray = [...currentParkingLot];
+        let copiedParkingLot = { ...currentParkingLot };
 
-        if (parkingLotArray.length > 0) {
-            parkingLotArray.forEach((parkingLot) => {
-                parkingLot.setMap(null);
+        let isEmpty = Object.entries(copiedParkingLot).length === 0;
+        console.log(currentParkingLot, copiedParkingLot);
+
+        if (!isEmpty) {
+            console.log(copiedParkingLot !== {});
+            console.log(copiedParkingLot);
+            copiedParkingLot.setMap(null).then((result) => {
+                console.log(result);
+                copiedParkingLot = {};
             });
-            parkingLotArray = [];
         }
 
-        console.log("par", parkingLotArray);
-
+        // 바텀시트 활성화
         setIsBottomSheetVisible(true);
 
         const parkingLot = DB.find((lot) => lot.parkingCode === _id);
@@ -115,6 +118,7 @@ function Map(props) {
             yAnchor: 0.5, // 컨텐츠의 y축 위치. 이하 동문
         });
 
+        // overlay에 들어갈 Info
         setCurrentParkingLotInfo(parkingLot);
 
         // setCurrentParkingLot((parkingLot) => {
@@ -122,22 +126,19 @@ function Map(props) {
         //     return [overlay];
         // });
 
-        parkingLotArray.unshift(overlay);
+        copiedParkingLot = overlay;
 
-        // currentParkingLot[0].setMap(null);
-        console.log("null", currentParkingLot);
+        console.log("null", copiedParkingLot);
 
-        console.log(parkingLotArray);
+        console.log(copiedParkingLot);
 
-        // if (parkingLotArray.length > 0) {
-        //     parkingLotArray.forEach((parkingLot) => parkingLot.setMap(map)); // overlay를 지도에 표시
-        // }
+        if (!isEmpty) {
+            console.log(copiedParkingLot);
 
-        setCurrentParkingLot((prev) => {
-            const newParkingLot = [...prev, overlay];
-            newParkingLot.forEach((parkingLot) => parkingLot.setMap(map));
-            return newParkingLot;
-        });
+            copiedParkingLot.setMap(map); // overlay를 지도에 표시
+        }
+
+        setCurrentParkingLot({ ...copiedParkingLot });
     });
 
     const { makeMap, makeMarkers, map, markers } = useMap(
@@ -183,13 +184,6 @@ function Map(props) {
     // useEffect(() => {
     //     onClickMarker(_id);
     // }, [_id]);
-
-    // useEffect(() => {
-    //     if (currentParkingLot) {
-    //         currentParkingLot.setMap(null);
-    //     }
-    //     setCurrentParkingLotInfo(null);
-    // }, [markers]);
 
     // 현재 위치 표시
     const showCurrentLocationMarker = useCallback(() => {
@@ -240,7 +234,6 @@ function Map(props) {
             // }
 
             markerCurrentLocation.setMap(map);
-            // currentLocationMarker.push(markerCurrentLocation);
 
             // 마커 좌표로 이동
             map.panTo(currentLocation);

@@ -52,7 +52,8 @@ export default function useMap(
 
         // 기존 마커 제거
         if (markers.length > 0) {
-            markers.forEach((marker) => marker.setMap(null));
+            const copiedMarkers = [...markers]; // markers 배열 복사
+            copiedMarkers.forEach((marker) => marker.setMap(null));
         }
 
         // 마커 표시하기
