@@ -17,6 +17,6 @@ export const noticeListState = atom({
 
 export const currentParkingLotState = atom({
     key: "currentParkingLotState",
-    default: {},
+    default: [],
 });
 
