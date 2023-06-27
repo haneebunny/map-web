@@ -1,7 +1,7 @@
 export const getParkingLotParams = {
     keyword: "광주",
-    parkingFee: "유료",
-    page: 1,
-    pageSize: 100,
+    parkingFee: "",
+    page: 10,
+    pageSize: 30,
 };
 
