@@ -12,7 +12,8 @@ const nextConfig = {
         path: isProd ? VercelURL : "http://localhost:3000",
     },
     assetPrefix: isProd ? VercelURL : " ./",
-    basePath: isProd ? "/map-web" : "",
+    // basePath: isProd ? "/map-web" : "",
+    basePath: isProd ? "" : "",
 };
 
 module.exports = nextConfig;
