@@ -28,7 +28,7 @@ export default function MyLocation({ map }) {
         // 이전 위치 값 저장
         const previousLocation = currentLocationMarker[0]?.getPosition();
 
-        navigator.geolocation.getCurrentPosition(async function (position) {
+        const getCurrentPositionSuccess = async (position) => {
             const lat = position.coords.latitude; // 현재 위치의 위도
             const lng = position.coords.longitude; // 현재 위치의 경도
 
@@ -58,7 +58,16 @@ export default function MyLocation({ map }) {
             // ]);
 
             map.panTo(currentLocation);
-        });
+        };
+
+        const getCurrentPositionError = (error) => {
+            alert(error.message);
+        };
+
+        navigator.geolocation.getCurrentPosition(
+            getCurrentPositionSuccess,
+            getCurrentPositionError
+        );
     });
 
     return (
@@ -70,9 +79,7 @@ export default function MyLocation({ map }) {
         >
             <BiCurrentLocation
                 className={`text-xl m-auto ${
-                    isActiveCurrentLocation
-                        ? "text-emerald-500"
-                        : "text-gray-600"
+                    isActiveCurrentLocation ? "text-cyan-500" : "text-gray-600"
                 }`}
             />
         </button>

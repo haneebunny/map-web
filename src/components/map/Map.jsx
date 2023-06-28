@@ -16,6 +16,7 @@ import { getParkingLotParams } from "../../common/config/parkingLot";
 import BottomSheet from "../bottomSheet/BottomSheet";
 import NoticeMessage from "./NoticeMessage";
 import MyLocation from "./MyLocation";
+import MarkerInfo from "./MarkerInfo";
 
 function Map(props) {
     const [isBottomSheetVisible, setIsBottomSheetVisible] = useRecoilState(
@@ -183,6 +184,7 @@ function Map(props) {
                     overflow: "hidden",
                 }}
             >
+                <MarkerInfo />
                 <NoticeMessage />
                 <MyLocation map={map} />
                 {isMobileSize && currentParkingLotInfo && (
