@@ -36,7 +36,7 @@ export default function MyLocation({ map }) {
             const currentLocation =
                 previousLocation || new kakao.maps.LatLng(lat, lng);
 
-            const imageSrc = "/img/point.png"; // 마커이미지의 주소
+            const imageSrc = "./img/point.png"; // 마커이미지의 주소
             const imageSize = new window.kakao.maps.Size(40, 40); // 마커이미지의 크기
             const markerImage = new window.kakao.maps.MarkerImage(
                 imageSrc,

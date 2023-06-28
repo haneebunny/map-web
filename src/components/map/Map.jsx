@@ -154,7 +154,7 @@ function Map(props) {
     // 지도 생성
     useEffect(() => {
         console.log("지도 생성");
-        kakao.maps.load(() => {
+        window.kakao.maps.load(() => {
             makeMap();
         });
     }, []);
@@ -162,7 +162,7 @@ function Map(props) {
     // 마커 생성
     useEffect(() => {
         console.log("마커 생성");
-        kakao.maps.load(() => {
+        window.kakao.maps.load(() => {
             makeMarkers();
         });
     }, [DB]);

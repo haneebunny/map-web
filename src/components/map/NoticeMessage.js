@@ -64,7 +64,7 @@ export default function NoticeMessage() {
 
     return (
         <MessageBox
-            isVisible={true}
+            isVisible={noticeList && true}
             className="w-auto min-w-[300px] fixed left-[50%] top-20  -translate-x-1/2 -translate-y-1/2 z-10 flex flex-row justify-center items-center"
         >
             <div className="px-3 py-1  text-white bg-opacity-80 bg-[#5db5a8]   rounded-2xl">
