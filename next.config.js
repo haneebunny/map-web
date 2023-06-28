@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const isProd = process.env.NODE_ENV === "production";
-const URL = "https://haneebunny.github.io/map-web/";
-const VercelURL = "https://kakaomap-web.vercel.app";
+const URL = "https://kakaomap-web.vercel.app";
 
 const nextConfig = {
     reactStrictMode: true,
@@ -9,11 +8,11 @@ const nextConfig = {
     swcMinify: true,
     images: {
         loader: "akamai",
-        path: isProd ? VercelURL : "http://localhost:3000",
+        path: isProd ? URL : "http://localhost:3000",
     },
-    assetPrefix: isProd ? "./" : " ./",
+    assetPrefix: "",
     // basePath: isProd ? "/map-web" : "",
-    basePath: isProd ? "" : "",
+    basePath: "",
 };
 
 module.exports = nextConfig;
