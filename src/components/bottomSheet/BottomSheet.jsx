@@ -16,7 +16,8 @@ export default function BottomSheet({ info, setCurrentParkingLotInfo }) {
 
     useEffect(() => {
         if (typeof window !== "undefined") {
-            setSheetHeight(window.innerHeight - 60);
+            setSheetHeight(window.innerHeight - 30);
+            // 바텀시트 올렸을 때 높이
         }
 
         return () => {

@@ -3,6 +3,8 @@ import { useRecoilState } from "recoil";
 import { isWeekday, makeOperatingHours } from "../../common/api/date";
 import { isBottomSheetExpandedState } from "../../common/store/atom";
 
+const PARKING_STOREY = ["B1", "B2", "B3", "B4"];
+
 export default function Content({ info }) {
     const [isBottomSheetExpanded, _] = useRecoilState(
         isBottomSheetExpandedState
@@ -27,7 +29,7 @@ export default function Content({ info }) {
                 <p className=" text-sm text-slate-500">{info?.addrRoad}</p>
 
                 {/* 바텀시트 올리지 않았을 때 부분 */}
-                {!isBottomSheetExpanded && (
+                {!isBottomSheetExpanded ? (
                     <div className="w-full  h-20 rounded-xl bg-slate-100 p-2 flex  text-[0.9rem] text-slate-900 mt-2 mb-4">
                         <div className="h-12 m-auto flex flex-col justify-between">
                             <p>
@@ -54,9 +56,27 @@ export default function Content({ info }) {
                             </p>
                         </div>
                     </div>
+                ) : (
+                    <div>
+                        <div>
+                            <h1 className="font-bold text-lg">주차가능대수</h1>
+
+                            {PARKING_STOREY?.map((storey) => (
+                                <div key={storey} class="flex items-center p-3">
+                                    <div class="w-10 text-md">{storey}</div>
+                                    <div class="flex-grow mx-2 border-b border-dashed  border-gray-300"></div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="font-bold">13</div>
+                                        <div>/</div>
+                                        <div class=" text-gray-400">100</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        <h1 className="font-bold text-lg">요금정보</h1>
+                    </div>
                 )}
-                <h1 className="font-bold text-lg">주차가능대수</h1>
-                <h1 className="font-bold text-lg">요금정보</h1>
             </div>
 
             {/* 바텀시트 올리지 않았을 때 버튼 */}
