@@ -11,7 +11,7 @@ const nextConfig = {
         loader: "akamai",
         path: isProd ? VercelURL : "http://localhost:3000",
     },
-    assetPrefix: isProd ? VercelURL : " ./",
+    assetPrefix: isProd ? "./" : " ./",
     // basePath: isProd ? "/map-web" : "",
     basePath: isProd ? "" : "",
 };
