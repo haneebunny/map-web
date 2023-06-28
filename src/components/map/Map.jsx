@@ -143,7 +143,7 @@ function Map(props) {
     // 서버에 api요청해 데이터 받아오기
     useEffect(() => {
         const getParkingLotData = async () => {
-            const { data } = await axios.get(`/api/parking-lot`, {
+            const { data } = await axios.get(`./api/parking-lot`, {
                 params: getParkingLotParams,
             });
             setDB(data);
