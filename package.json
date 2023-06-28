@@ -1,5 +1,5 @@
 {
-    "homepage": "https://haneebunny.github.io/map-web/",
+    "homepage": "https://kakaomap-web.vercel.app",
     "name": "map-web",
     "version": "0.1.0",
     "private": true,
@@ -47,3 +47,4 @@
         "tailwindscss": "0.3.0"
     }
 }
+
