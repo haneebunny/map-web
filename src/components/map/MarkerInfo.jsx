@@ -26,7 +26,7 @@ export default function MarkerInfo() {
                     </div>
                 </div>
             ) : (
-                <div className="w-8 h-8 bg-[#ffffff83]  p-2 rounded-md">
+                <div className="sm:w-8 sm:h-8 bg-[#ffffff83] p-2 rounded-md">
                     <img
                         className="w-5 h-5 sm:w-4 sm:h-4 opacity-90"
                         src="./img/marker_blue_mini.png"

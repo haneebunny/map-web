@@ -1,15 +1,24 @@
 import styled from "@emotion/styled";
 import { motion } from "framer-motion";
+import { isBot } from "next/dist/server/web/spec-extension/user-agent";
 
 // hooks
 import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
 import { useBottomSheet } from "../../common/hook/useBottomSheet";
+
+// atom
+import { isBottomSheetVisibleState } from "../../common/store/atom";
 
 // components
 import BottomSheetHeader from "./BottomSheetHeader";
 import Content from "./Content";
 
 export default function BottomSheet({ info, setCurrentParkingLotInfo }) {
+    const [isBottomSheetVisible, setIsBottomSheetVisible] = useRecoilState(
+        isBottomSheetVisibleState
+    );
+
     const [sheetHeight, setSheetHeight] = useState();
 
     const { sheet, content } = useBottomSheet();
@@ -25,8 +34,29 @@ export default function BottomSheet({ info, setCurrentParkingLotInfo }) {
         };
     }, []);
 
+    // BottomSheet 밖에 클릭시 BottomSheet 꺼짐
+    useEffect(() => {
+        document.addEventListener("click", onClickOutside);
+
+        return () => {
+            document.removeEventListener("click", onClickOutside);
+        };
+    }, []);
+
+    const onClickOutside = (e) => {
+        if (!isBottomSheetVisible) return;
+
+        if (sheet.current && !sheet.current?.contains(e.target)) {
+            console.log(isBottomSheetVisible);
+            setIsBottomSheetVisible(false);
+            console.log(isBottomSheetVisible);
+        }
+    };
+
+    console.log(isBottomSheetVisible);
     return (
         <Wrapper
+            isvisible={isBottomSheetVisible.toString()}
             ref={sheet}
             sheetheight={sheetHeight}
             className={`flex flex-col fixed z-10  left-0 right-0 rounded-t-md bg-white shadow-md transition-transform duration-700 ease-in-out`}
@@ -40,6 +70,7 @@ export default function BottomSheet({ info, setCurrentParkingLotInfo }) {
 }
 
 const Wrapper = styled(motion.div)`
+    /* display: ${(props) => (props.isvisible ? "flex" : "none")}; */
     display: flex;
     flex-direction: column;
 

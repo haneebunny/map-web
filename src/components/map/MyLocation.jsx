@@ -14,6 +14,17 @@ export default function MyLocation({ map }) {
             currentLocationMarker.map((marker) => marker.setMap(map));
         }
     }, [currentLocationMarker]);
+
+    const hideCurrentLocationMarker = useCallback(() => {
+        setIsActiveCurrentLocation(false);
+
+        if (currentLocationMarker.length) {
+            currentLocationMarker.map((marker) => marker.setMap(null));
+
+            setCurrentLocationMarker([]);
+        }
+    });
+
     // 현재 위치 표시
     const showCurrentLocationMarker = useCallback(async () => {
         if (!navigator.geolocation) return;
@@ -75,7 +86,11 @@ export default function MyLocation({ map }) {
             className="w-8 h-8 z-30 absolute right-1  bottom-1/3 bg-white
           shadow-lg  rounded-md
         "
-            onClick={showCurrentLocationMarker}
+            onClick={
+                isActiveCurrentLocation
+                    ? hideCurrentLocationMarker
+                    : showCurrentLocationMarker
+            }
         >
             <BiCurrentLocation
                 className={`text-xl m-auto ${

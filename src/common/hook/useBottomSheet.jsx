@@ -14,179 +14,178 @@ import { isBottomSheetExpandedState } from "../store/atom";
 // }
 
 export function useBottomSheet() {
-  const [minY, setMinY] = useState(60);
-  const [maxY, setMaxY] = useState(0);
-  const [isBottomSheetExpanded, setIsBottomSheetExpanded] = useRecoilState(
-    isBottomSheetExpandedState
-  );
+    const [minY, setMinY] = useState(60);
+    const [maxY, setMaxY] = useState(0);
+    const [isBottomSheetExpanded, setIsBottomSheetExpanded] = useRecoilState(
+        isBottomSheetExpandedState
+    );
 
-  // console.log(minY, maxY);
-  const sheet = useRef(null);
+    const sheet = useRef(null);
 
-  const content = useRef(null);
+    const content = useRef(null);
 
-  const metrics = useRef({
-    touchStart: {
-      sheetY: 0,
-      touchY: 0,
-    },
-    touchMove: {
-      prevTouchY: 0,
-      movingDirection: "none",
-    },
-    isContentAreaTouched: false,
-  });
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setMaxY(window.innerHeight - 160);
-    }
-  }, []);
-  // if (typeof window !== "undefined") console.log(window.innerHeight - 160);
-
-  useEffect(() => {
-    // if (typeof window === "undefined") {
-    //   return;
-    // }
-
-    const windowY = window.innerHeight;
-    const maxY = windowY - 160;
-
-    const canUserMoveBottomSheet = () => {
-      const { touchMove, isContentAreaTouched } = metrics.current;
-
-      if (!isContentAreaTouched) {
-        return true;
-      }
-
-      if (sheet.current?.getBoundingClientRect().y !== minY) {
-        return true;
-      }
-
-      if (touchMove.movingDirection === "down") {
-        return content.current?.scrollTop <= 0;
-      }
-      return false;
-    };
-
-    const handleTouchStart = (e) => {
-      const { touchStart } = metrics.current;
-      touchStart.sheetY = sheet.current?.getBoundingClientRect().y;
-      touchStart.touchY = e.touches[0].clientY;
-    };
-    const handleTouchMove = (e) => {
-      const { touchStart, touchMove } = metrics.current;
-      const currentTouch = e.touches[0];
-      if (touchMove.prevTouchY === undefined) {
-        touchMove.prevTouchY = touchStart.touchY;
-      }
-
-      if (touchMove.prevTouchY === 0) {
-        // 맨 처음 앱 시작하고 시작시
-        touchMove.prevTouchY = touchStart.touchY;
-      }
-
-      if (touchMove.prevTouchY < currentTouch.clientY) {
-        touchMove.movingDirection = "down";
-      }
-
-      if (touchMove.prevTouchY > currentTouch.clientY) {
-        setIsBottomSheetExpanded(true); // 여기 추가
-        touchMove.movingDirection = "up";
-      }
-
-      if (canUserMoveBottomSheet()) {
-        e.preventDefault();
-
-        const touchOffset = currentTouch.clientY - touchStart.touchY;
-        let nextSheetY = touchStart.sheetY + touchOffset;
-
-        if (nextSheetY <= minY) {
-          nextSheetY = minY;
-        }
-
-        if (nextSheetY >= maxY) {
-          nextSheetY = maxY;
-        }
-
-        sheet.current?.style.setProperty(
-          "transform",
-          `translateY(${nextSheetY - maxY}px)`
-        ); //바닥 만큼은 빼야한다
-      } else {
-        document.body.style.overflowY = "hidden";
-      }
-    };
-
-    const handleTouchEnd = (e) => {
-      document.body.style.overflowY = "auto"; //스크롤 설정
-      const { touchMove } = metrics.current;
-
-      const currentSheetY = sheet.current?.getBoundingClientRect().y;
-
-      console.log(currentSheetY, minY);
-
-      const transitionEnd = () => {
-        // setIsUp(true); // 원래 코드
-
-        if (touchMove?.movingDirection === "down") {
-          setIsBottomSheetExpanded(false);
-        } // 이 부분 추가
-
-        if (touchMove?.movingDirection === "up") {
-          setIsBottomSheetExpanded(true);
-        } // 이 부분 추가
-      };
-      if (currentSheetY !== minY) {
-        if (touchMove.movingDirection === "down") {
-          sheet.current.style.setProperty("transform", "translateY(0)");
-          // sheet.current.removeEventListener("transitionend", transitionEnd);
-        }
-
-        if (touchMove.movingDirection === "up") {
-          sheet.current.style.setProperty(
-            "transform",
-            // `translateY(${minY - maxY}px)`
-            "translateY(-30%)"
-          );
-
-          // sheet.current.addEventListener("transitionend", transitionEnd);
-        }
-      }
-
-      if (currentSheetY === minY) {
-        // setIsUp(false);
-        sheet.current.removeEventListener("transitionend", transitionEnd);
-        return; // 230530 ***
-      }
-
-      sheet.current.addEventListener("transitionend", transitionEnd);
-
-      // metrics 초기화.
-      metrics.current = {
+    const metrics = useRef({
         touchStart: {
-          sheetY: 0,
-          touchY: 0,
+            sheetY: 0,
+            touchY: 0,
         },
         touchMove: {
-          prevTouchY: 0,
-          movingDirection: "none",
+            prevTouchY: 0,
+            movingDirection: "none",
         },
         isContentAreaTouched: false,
-      };
-    };
+    });
 
-    sheet.current?.addEventListener("touchstart", handleTouchStart);
-    sheet.current?.addEventListener("touchmove", handleTouchMove);
-    sheet.current?.addEventListener("touchend", handleTouchEnd);
-  }, [isBottomSheetExpanded]);
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            setMaxY(window.innerHeight - 160);
+        }
+    }, []);
 
-  useEffect(() => {
-    const handleTouchStart = () => {
-      metrics.current.isContentAreaTouched = true;
-    };
-    content.current?.addEventListener("touchstart", handleTouchStart);
-  }, []);
+    useEffect(() => {
+        const windowY = window.innerHeight;
+        const maxY = windowY - 160;
 
-  return { sheet, content };
+        const canUserMoveBottomSheet = () => {
+            const { touchMove, isContentAreaTouched } = metrics.current;
+
+            if (!isContentAreaTouched) {
+                return true;
+            }
+
+            if (sheet.current?.getBoundingClientRect().y !== minY) {
+                return true;
+            }
+
+            if (touchMove.movingDirection === "down") {
+                return content.current?.scrollTop <= 0;
+            }
+            return false;
+        };
+
+        const handleTouchStart = (e) => {
+            const { touchStart } = metrics.current;
+            touchStart.sheetY = sheet.current?.getBoundingClientRect().y;
+            touchStart.touchY = e.touches[0].clientY;
+        };
+        const handleTouchMove = (e) => {
+            const { touchStart, touchMove } = metrics.current;
+            const currentTouch = e.touches[0];
+            if (touchMove.prevTouchY === undefined) {
+                touchMove.prevTouchY = touchStart.touchY;
+            }
+
+            if (touchMove.prevTouchY === 0) {
+                // 맨 처음 앱 시작하고 시작시
+                touchMove.prevTouchY = touchStart.touchY;
+            }
+
+            if (touchMove.prevTouchY < currentTouch.clientY) {
+                touchMove.movingDirection = "down";
+            }
+
+            if (touchMove.prevTouchY > currentTouch.clientY) {
+                setIsBottomSheetExpanded(true); // 여기 추가
+                touchMove.movingDirection = "up";
+            }
+
+            if (canUserMoveBottomSheet()) {
+                e.preventDefault();
+
+                const touchOffset = currentTouch.clientY - touchStart.touchY;
+                let nextSheetY = touchStart.sheetY + touchOffset;
+
+                if (nextSheetY <= minY) {
+                    nextSheetY = minY;
+                }
+
+                if (nextSheetY >= maxY) {
+                    nextSheetY = maxY;
+                }
+
+                sheet.current?.style.setProperty(
+                    "transform",
+                    `translateY(${nextSheetY - maxY}px)`
+                ); //바닥 만큼은 빼야한다
+            } else {
+                document.body.style.overflowY = "hidden";
+            }
+        };
+
+        const handleTouchEnd = (e) => {
+            document.body.style.overflowY = "auto"; //스크롤 설정
+            const { touchMove } = metrics.current;
+
+            const currentSheetY = sheet.current?.getBoundingClientRect().y;
+
+            const transitionEnd = () => {
+                // setIsUp(true); // 원래 코드
+
+                if (touchMove?.movingDirection === "down") {
+                    setIsBottomSheetExpanded(false);
+                } // 이 부분 추가
+
+                if (touchMove?.movingDirection === "up") {
+                    setIsBottomSheetExpanded(true);
+                } // 이 부분 추가
+            };
+            if (currentSheetY !== minY) {
+                if (touchMove.movingDirection === "down") {
+                    sheet.current.style.setProperty(
+                        "transform",
+                        "translateY(0)"
+                    );
+                    // sheet.current.removeEventListener("transitionend", transitionEnd);
+                }
+
+                if (touchMove.movingDirection === "up") {
+                    sheet.current.style.setProperty(
+                        "transform",
+                        // `translateY(${minY - maxY}px)`
+                        "translateY(-30%)"
+                    );
+
+                    // sheet.current.addEventListener("transitionend", transitionEnd);
+                }
+            }
+
+            if (currentSheetY === minY) {
+                // setIsUp(false);
+                sheet.current.removeEventListener(
+                    "transitionend",
+                    transitionEnd
+                );
+                return; // 230530 ***
+            }
+
+            sheet.current.addEventListener("transitionend", transitionEnd);
+
+            // metrics 초기화.
+            metrics.current = {
+                touchStart: {
+                    sheetY: 0,
+                    touchY: 0,
+                },
+                touchMove: {
+                    prevTouchY: 0,
+                    movingDirection: "none",
+                },
+                isContentAreaTouched: false,
+            };
+        };
+
+        sheet.current?.addEventListener("touchstart", handleTouchStart);
+        sheet.current?.addEventListener("touchmove", handleTouchMove);
+        sheet.current?.addEventListener("touchend", handleTouchEnd);
+    }, [isBottomSheetExpanded]);
+
+    useEffect(() => {
+        const handleTouchStart = () => {
+            metrics.current.isContentAreaTouched = true;
+        };
+        content.current?.addEventListener("touchstart", handleTouchStart);
+    }, []);
+
+    return { sheet, content };
 }
+

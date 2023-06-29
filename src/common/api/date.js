@@ -36,6 +36,16 @@ export const makeOperatingHours = (info) => {
         message = "운영 종료";
     }
 
-    return [message, endHour, endMinute];
+    let rates, addTimeRates;
+
+    if (info.payYn === "무료") {
+        rates = "무료";
+        addTimeRates = "무료";
+    } else {
+        rates = `${info.rates}원`;
+        addTimeRates = `${info.addTimeRate}분 당 ${info.addRates}원`;
+    }
+
+    return { message, endHour, endMinute, rates, addTimeRates };
 };
 

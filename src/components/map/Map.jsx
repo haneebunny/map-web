@@ -23,16 +23,14 @@ function Map(props) {
         isBottomSheetVisibleState
     );
 
-    const [DB, setDB] = useState([]);
-
-    // DB에서 뽑아낸 하나의 주차장 정보
-    const [currentParkingLotInfo, setCurrentParkingLotInfo] = useState(null);
-
     // 카카오맵 객체
     const [currentParkingLot, setCurrentParkingLot] = useRecoilState(
         currentParkingLotState
     );
 
+    // DB에서 뽑아낸 하나의 주차장 정보
+    const [currentParkingLotInfo, setCurrentParkingLotInfo] = useState(null);
+    const [DB, setDB] = useState([]);
     const [markerImage, setMarkerImage] = useState(null);
     const [markerImageB, setMarkerImageB] = useState(null);
     const [markerImageY, setMarkerImageY] = useState(null);
@@ -187,12 +185,14 @@ function Map(props) {
                 <MarkerInfo />
                 <NoticeMessage />
                 <MyLocation map={map} />
-                {isMobileSize && currentParkingLotInfo && (
-                    <BottomSheet
-                        info={currentParkingLotInfo}
-                        setCurrentParkingLotInfo={setCurrentParkingLotInfo}
-                    />
-                )}
+                {isMobileSize &&
+                    currentParkingLotInfo &&
+                    isBottomSheetVisible && (
+                        <BottomSheet
+                            info={currentParkingLotInfo}
+                            setCurrentParkingLotInfo={setCurrentParkingLotInfo}
+                        />
+                    )}
             </div>
         </div>
     );

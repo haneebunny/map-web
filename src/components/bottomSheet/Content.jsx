@@ -3,6 +3,10 @@ import { useRecoilState } from "recoil";
 import { isWeekday, makeOperatingHours } from "../../common/api/date";
 import { isBottomSheetExpandedState } from "../../common/store/atom";
 
+// icons
+import { LuParkingCircle } from "react-icons/lu";
+import { GrMoney } from "react-icons/gr";
+
 const PARKING_STOREY = ["B1", "B2", "B3", "B4"];
 
 export default function Content({ info }) {
@@ -11,7 +15,8 @@ export default function Content({ info }) {
     );
 
     const weekday = isWeekday();
-    const [isOpen, endHour, endMinute] = makeOperatingHours(info);
+    const { isOpen, endHour, endMinute, rates, addTimeRates } =
+        makeOperatingHours(info);
 
     useEffect(() => {
         // sheet.current.addEventListener("transitionend", () => {
@@ -34,11 +39,11 @@ export default function Content({ info }) {
                         <div className="h-12 m-auto flex flex-col justify-between">
                             <p>
                                 <span className="font-bold">기본 요금 </span>|{" "}
-                                {info?.rates}원
+                                {rates}
                             </p>
                             <p>
                                 <span className="font-bold">추가 요금 </span>|{" "}
-                                {info?.addTimeRate}분 당 {info?.addRates}원
+                                {addTimeRates}
                             </p>
                         </div>
                         <div className="h-10 m-auto  border-r border-gray-400"></div>
@@ -57,9 +62,12 @@ export default function Content({ info }) {
                         </div>
                     </div>
                 ) : (
-                    <div>
+                    <div className="mt-10">
                         <div>
-                            <h1 className="font-bold text-lg">주차가능대수</h1>
+                            <h1 className="font-bold text-lg flex items-center gap-1">
+                                <LuParkingCircle />
+                                주차가능대수
+                            </h1>
 
                             {PARKING_STOREY?.map((storey) => (
                                 <div key={storey} class="flex items-center p-3">
@@ -73,8 +81,40 @@ export default function Content({ info }) {
                                 </div>
                             ))}
                         </div>
-
-                        <h1 className="font-bold text-lg">요금정보</h1>
+                        <div className="border-b border-gray-500" />
+                        <div>
+                            <h1 className="font-bold text-lg flex items-center gap-1">
+                                <GrMoney />
+                                요금정보
+                            </h1>
+                            <div class="flex items-center p-3">
+                                <div class="w-10 text-md">30분 당</div>
+                                <div class="flex-grow mx-2 border-b border-dashed  border-gray-300"></div>
+                                <div class="flex items-center gap-2">
+                                    <div class="font-bold">1,500원</div>
+                                    <div>/</div>
+                                    <div class=" text-gray-400">100</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center p-3">
+                                <div class="w-10 text-md">30분 당</div>
+                                <div class="flex-grow mx-2 border-b border-dashed  border-gray-300"></div>
+                                <div class="flex items-center gap-2">
+                                    <div class="font-bold">1,500원</div>
+                                    <div>/</div>
+                                    <div class=" text-gray-400">100</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center p-3">
+                                <div class="w-10 text-md">30분 당</div>
+                                <div class="flex-grow mx-2 border-b border-dashed  border-gray-300"></div>
+                                <div class="flex items-center gap-2">
+                                    <div class="font-bold">1,500원</div>
+                                    <div>/</div>
+                                    <div class=" text-gray-400">100</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>
