@@ -8,19 +8,25 @@ export default function MySocket() {
     const [noticeState, setNoticeState] = useRecoilState(noticeListState);
 
     useEffect(() => {
-        const socket = io("http://localhost:4000");
+        const socket = io("http://localhost:4000", {
+            reconnection: true,
+            reconnectionAttempts: 5, // 재연결 시도 횟수
+            // 재연결 시도 딜레이
+        });
 
         socket.connect();
 
         setSocket(socket);
 
-        socket.on("connect", onConnect);
+        if (socket) {
+            socket.on("connect", onConnect);
 
-        socket.on("disconnect", onDisconnect);
+            socket.on("disconnect", onDisconnect);
 
-        socket.on("chat message", onChatMessage);
+            socket.on("chat message", onChatMessage);
 
-        socket.on("notice", onNotice);
+            socket.on("notice", onNotice);
+        }
 
         return () => {
             socket.disconnect();
