@@ -9,6 +9,7 @@ import useMap from "../../common/hook/useMap";
 import {
     currentParkingLotState,
     isBottomSheetVisibleState,
+    parkingLotConfigState,
 } from "../../common/store/atom";
 import { getParkingLotParams } from "../../common/config/parkingLot";
 
@@ -36,6 +37,10 @@ function Map(props) {
     const [markerImageY, setMarkerImageY] = useState(null);
 
     const [isMobileSize, setIsMobileSize] = useState(false);
+
+    const [parkingLotConfig, setParkingLotConfig] = useRecoilState(
+        parkingLotConfigState
+    );
 
     const router = useRouter();
 
@@ -131,10 +136,8 @@ function Map(props) {
 
     useEffect(() => {
         if (!map) return;
-        console.log(map);
-        console.log(currentParkingLot);
+
         if (currentParkingLot.length) {
-            console.log("안", currentParkingLot);
             currentParkingLot.map((overlay) => overlay && overlay.setMap(null));
         }
     }, [map, currentParkingLot]);
@@ -143,13 +146,14 @@ function Map(props) {
     useEffect(() => {
         const getParkingLotData = async () => {
             const { data } = await axios.get(`/api/parking-lot`, {
-                params: getParkingLotParams,
+                params: parkingLotConfig,
             });
             setDB(data);
         };
         getParkingLotData();
-    }, []);
+    }, [parkingLotConfig]);
 
+    DB.map((el) => console.log(el.payYn));
     // 지도 생성
     useEffect(() => {
         console.log("지도 생성");

@@ -20,3 +20,13 @@ export const currentParkingLotState = atom({
     default: [],
 });
 
+export const parkingLotConfigState = atom({
+    key: "parkingLotConfigState",
+    default: {
+        keyword: "광주", // 주차장명 또는 행정동 검색
+        parkingFee: "", // 무료/유료/""
+        page: 1, // 페이지 번호
+        pageSize: 10, // 출력갯수
+    },
+});
+
